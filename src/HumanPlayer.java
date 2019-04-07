@@ -2,6 +2,10 @@ import java.util.Vector;
 
 public class HumanPlayer extends Player {
 	
+	public boolean busted;
+	public boolean blackjack;
+	public int cur_bet;
+
 	public int getMove() {
 		//poll client for input whether to hit or stay, 0 is stay 1 is hit
 		return 0;
@@ -19,6 +23,9 @@ public class HumanPlayer extends Player {
 		userID = id;
 		currentBalance = balance;
 		hand = new Vector <Integer>();
+		busted = false;
+		blackjack = false;
+		cur_bet = 0;
 	}
 
 }
