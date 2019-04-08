@@ -30,6 +30,7 @@ public class BlackJack {
 		}
 		
 		DealerAI dealer = new DealerAI();
+		dealer.hand = new Vector<Integer>();
 		
 		//START GAME
 		boolean game = true;
@@ -138,41 +139,41 @@ public class BlackJack {
 				}
 				else if(pscore>dscore)
 				{
-					System.out.println("Dealer ("+dscore+") lost to Player "+i+1+" ("+pscore+"). Win.");
+					System.out.println("Dealer ("+dscore+") lost to Player "+(i+1)+" ("+pscore+"). Win.");
 					players.get(i).cur_balance += 2*players.get(i).cur_bet;
 					System.out.println("Player "+(i+1)+" gained "+2*players.get(i).cur_bet+" dollars.");
 					System.out.println("Current Balance: "+players.get(i).cur_balance);
 				}
 				else if (dscore == pscore)
 				{
-					System.out.println("Dealer ("+dscore+") tied with Player "+i+1+" ("+pscore+"). Push.");
+					System.out.println("Dealer ("+dscore+") tied with Player "+(i+1)+" ("+pscore+"). Push.");
 					players.get(i).cur_balance += players.get(i).cur_bet;
 					System.out.println("Player "+(i+1)+" didn't lose anything.");
 					System.out.println("Current Balance: "+players.get(i).cur_balance);	
 				}
 				else
 				{
-					System.out.println("Dealer ("+dscore+") - Player "+i+1+" ("+pscore+"). ???.");
+					System.out.println("Dealer ("+dscore+") - Player "+(i+1)+" ("+pscore+"). ???.");
 					System.out.println("Player "+(i+1)+" lost "+players.get(i).cur_bet+" dollars.");
 					System.out.println("Current Balance: "+players.get(i).cur_balance);	
 				}
 				
 				if(players.get(i).cur_balance==0)
 				{
-					System.out.println("Player "+i+1+" is out of money. Bailout (b) or quit (q)?");
+					System.out.println("Player "+(i+1)+" is out of money. Bailout (b) or quit (q)?");
 					String input = "";
 					while(!input.equalsIgnoreCase("b") && !input.equalsIgnoreCase("q"))
 					{
 						input = scan.nextLine();
 						if(input.equalsIgnoreCase("b"))
 						{
-							System.out.println("Player "+i+1+" has gained a bailout token.");
+							System.out.println("Player "+(i+1)+" has gained a bailout token.");
 							players.get(i).cur_balance += 500;
 							System.out.println("Current Balance: "+players.get(i).cur_balance);	
 						}
 						else if(input.equalsIgnoreCase("q"))
 						{
-							System.out.println("Player "+i+1+" has left the game.");
+							System.out.println("Player "+(i+1)+" has left the game.");
 							players.remove(i);
 						}
 						else
