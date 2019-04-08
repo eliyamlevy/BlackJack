@@ -23,6 +23,7 @@ public class AddRegister extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
+			HttpSession session = request.getSession();
 			Boolean success = true;
 			String fullName = request.getParameter("fullname");
 			String email = request.getParameter("email");
@@ -78,6 +79,7 @@ public class AddRegister extends HttpServlet {
 						ps.setString(3, username);
 						ps.setString(4, password);
 						ps.executeUpdate();
+						session.setAttribute("user", username);
 
 					}
 

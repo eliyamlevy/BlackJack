@@ -20,6 +20,7 @@ public class CheckLogin extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
+		HttpSession session = request.getSession();
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
 		Boolean valid = true;
@@ -54,6 +55,10 @@ public class CheckLogin extends HttpServlet {
 				
 				else if (!rs.getString("password").equals(password)) {
 					writer.println("Incorrect password.");
+				}
+
+				else {
+					session.setAttribute("user", username);
 				}
 				
 			} catch (ClassNotFoundException nfe) {
