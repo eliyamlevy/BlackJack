@@ -16,15 +16,15 @@ public class AIPlayer extends Player {
 	
 	public int getBet() {
 	
-		int bet = currentBalance/2;
-		currentBalance-=bet;
+		int bet = cur_balance/2;
+		cur_balance-=bet;
 		return bet;
 		
 	}
 	
 	public AIPlayer(int id, int balance) {
 		userID = id;
-		currentBalance = balance;
+		cur_balance = balance;
 		hand = new Vector <Integer>();
 	}
 	

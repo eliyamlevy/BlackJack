@@ -3,7 +3,7 @@ import java.util.Vector;
 public abstract class Player {
 	
 	int userID;
-	int currentBalance;
+	int cur_balance;
 	Vector <Integer> hand; //stores the numerical values of each card
 	
 	public abstract int getMove(); //0 signifies stay, 1 signifies to hit
