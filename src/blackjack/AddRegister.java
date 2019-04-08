@@ -22,72 +22,79 @@ public class AddRegister extends HttpServlet {
 
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
+
+			Boolean success = true;
+			String fullName = request.getParameter("fullname");
+			String email = request.getParameter("email");
+			String username = request.getParameter("username");
+			String password = request.getParameter("password");
+			String cpassword = request.getParameter("cpassword");
+
+			PrintWriter writer = response.getWriter();
+
+			if (username == null || username.trim().length() == 0) {
+				writer.println("Username needs a value");
+				success = false;
+			}
+
+			if (password == null || password.trim().length() == 0) {
+				writer.println("Password needs a value");
+				success = false;
+			}
+
+			if (cpassword == null || cpassword.trim().length() == 0) {
+				writer.println("Confirm Password a value");
+				success = false;
+			}
+
+			if(!cpassword.equals(password)) {
+				writer.println("Passwords do not match.");
+				success = false;
+			}
+		
+			if(success) {
+				
+				Connection conn = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+
+				try {
+					
+					conn = DriverManager.getConnection("jdbc:mysql://localhost/BlackJackDB?user=INSERTUSERNAME&password=INSERTPASSWORD");
+
+					ps = conn.prepareStatement("SELECT username from Users WHERE username=?");
+					ps.setString(1, username);
+
+					rs = ps.executeQuery();
+				
+					if (rs.next()) {
+						writer.println("Username already exists");
+					}
+
+					else {
+						ps = conn.prepareStatement("INSERT INTO Users (fullName, email, username, password, balance, bailoutTokens, score)" + "VALUES (?,?,?,?,500,0,500)");
+						ps.setString(1, fullName);
+						ps.setString(2, email);
+						ps.setString(3, username);
+						ps.setString(4, password);
+						ps.executeUpdate();
+
+					}
+
+				} catch (ClassNotFoundException nfe) {
+					System.out.println(nfe.getMessage());
+				} catch (SQLException sqle) {
+					System.out.print(sqle.getMessage());
+				}
+				
+			}
+
+			writer.flush();
+			writer.close();
+
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		HttpSession session = request.getSession(true);
-		
-		boolean success = true;
-		String errorMessage = "";
-		String fullName = request.getParameter("fullname");
-		String email = request.getParameter("email");
-		String username = request.getParameter("username");
-		String password = request.getParameter("password");
-		// cpassord: confirm password, should be equal to password
-		String cpassword = request.getParameter("cpassword");
-		
-		// check username not empty
-		username = username.trim();
-		if(username == null || username.length() == 0) {
-			success = false;
-			errorMessage = "username can't be empty. ";
-		}
-		// check passwords not empty
-		else if(password == null || password.length() == 0) {
-			success = false;
-			errorMessage = "password can't be empty. ";
-		}
-		else if(cpassword == null || cpassword.length() == 0) {
-			success = false;
-			errorMessage = "confirm password can't be empty. ";
-		}
-		
-		System.out.println(username+" "+password+" "+cpassword);
-		
-		// make sure username and passwords are not empty before checking with database
-		if(success) {
-			// **************************************************************************************
-			// TODO: check 1 - username is unique
-			//			   2 - passwords match
-			// 		 if not, write specific error message in errorMessage and set success to false;
-			
-			
-			
-			
-			
-			
-		}
-		
-		// invalid register information, back to register page
-		if(!success) {
-			session.setAttribute("registerError", errorMessage);
-			RequestDispatcher dispatch = getServletContext().getRequestDispatcher("/Register.jsp");
-			dispatch.forward(request, response);
-		}
-		// valid register information, write into database
-		else {
-			session.setAttribute("registerError", null);
-			// **************************************************************************************
-			// TODO: write register info into database;
-			
-			
-			
-			
-			
-			
-			
-		}
+		doGet(request, response);
 	}
 }
