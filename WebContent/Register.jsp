@@ -41,7 +41,7 @@
 		</div>
 		<div id="container">
 			<span id="header">Register</span>
-			<form class="form" name="registerForm" id="registerForm" method="GET" action="AddRegister">
+			<form class="form" name="registerForm" id="registerForm" method="GET" onsubmit="return validate();" action="HomePage.jsp">
 				Full Name <br /><input type="text" name="fullname" id="fullname"><br />
 				Email <br /><input type="email" name="email" id="email"><br />
 				Username <br /><input type="text" name="username" id="username"><br />
@@ -50,7 +50,7 @@
 				<span id="errorMessage"></span><br />
 				<span id="balanceInfo">Starting balance: $500</span><br />
 				<div id="avatarBlock">Avatar Block</div>
-				<button name="submit" id="submit" onclick="submit">Register</button>
+				<input type="submit" value="Register">
 			</form>
 		</div>
 	</body>
