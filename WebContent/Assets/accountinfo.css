@@ -1,0 +1,46 @@
+@charset "UTF-8";
+
+#background {
+	position:fixed;
+	background-image: url("loginBG.jpg");
+	background-repeat: no repeat;
+	background-size: cover;
+	filter: blur(4px);
+	height: 101%;
+	width: 101%;
+	left: -0.5%;
+	top: -0.5%;
+}
+
+#container {
+	color: white;
+	position: fixed;
+	top: 25%;
+	left: 50%;
+	height: 50%;
+	width: 35%;
+	background-color: rgba(169,169,169, 0.5);
+	border-radius: 5%;
+}
+
+#avatar {
+	position: relative;
+    margin-left: 10%;
+    margin-top: 10%;
+}
+
+#greeting {
+	position: absolute;
+    top: 20%;
+    left: 55%;
+}
+
+#toleader {
+	background-color: red;
+    border-radius: 1vh;
+    color: white;
+    font-size: 50%;
+    padding: 1%;
+    border-color: red;
+    position: relative;
+}
