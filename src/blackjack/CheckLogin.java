@@ -1,8 +1,13 @@
 package blackjack;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -44,6 +49,7 @@ public class CheckLogin extends HttpServlet {
 			ResultSet rs = null;
 			
 			try {
+				Class.forName("com.mysql.cj.jdbc.Driver");
 				conn = DriverManager.getConnection("jdbc:mysql://localhost/BlackJackDB?user=INSERTUSERNAME&password=INSERTPASSWORD");
 				ps = conn.prepareStatement("SELECT username, password from Users WHERE username=?");
 				ps.setString(1, username);
