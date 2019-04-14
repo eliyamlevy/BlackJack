@@ -88,8 +88,6 @@ public class AddRegister extends HttpServlet {
 
 					}
 
-				} catch (ClassNotFoundException nfe) {
-					System.out.println(nfe.getMessage());
 				} catch (SQLException sqle) {
 					System.out.print(sqle.getMessage());
 				}

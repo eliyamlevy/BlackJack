@@ -67,8 +67,6 @@ public class CheckLogin extends HttpServlet {
 					session.setAttribute("user", username);
 				}
 				
-			} catch (ClassNotFoundException nfe) {
-				System.out.println(nfe.getMessage());
 			} catch (SQLException sqle) {
 				System.out.print(sqle.getMessage());
 			}	
