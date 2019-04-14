@@ -1,8 +1,13 @@
 package blackjack;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -61,8 +66,6 @@ public class CheckLogin extends HttpServlet {
 					session.setAttribute("user", username);
 				}
 				
-			} catch (ClassNotFoundException nfe) {
-				System.out.println(nfe.getMessage());
 			} catch (SQLException sqle) {
 				System.out.print(sqle.getMessage());
 			}	
