@@ -90,6 +90,9 @@ public class AddRegister extends HttpServlet {
 
 				} catch (SQLException sqle) {
 					System.out.print(sqle.getMessage());
+				} catch (ClassNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 				
 			}

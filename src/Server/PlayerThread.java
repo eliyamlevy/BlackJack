@@ -4,12 +4,20 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
 
 public class PlayerThread extends Thread{
+	
 	private PrintWriter pw;
 	private BufferedReader br;
-	BJServer bjs;
-	Socket s;
+	private BJServer bjs;
+	private Socket s;
+	private TableThread table;
+	
+	private Lock lock;
+	private Condition canPlay;
+	private boolean isFirst = false;
 	
 	public PlayerThread(BJServer bjs, Socket s) {
 		this.bjs = bjs;
@@ -23,16 +31,51 @@ public class PlayerThread extends Thread{
 		}
 	}
 	
+	public void sendMessage(String message) {
+		pw.println(message);
+		pw.flush();
+	}
+	
+	public void set(TableThread t, Lock newLock, Condition play, Boolean first) {
+		table = t;
+		lock = newLock;
+		canPlay = play;
+		isFirst = first;
+	}
+	
 	public void run() {
 		try {
-			while(true) {
-				String line = br.readLine();
-				if(line.trim().equals("NEWTABLE")) {
+			String line = "";
+			
+			while (table == null) {
+				line = br.readLine();
+				if(line.contains("NEWTABLE")) {
+					this.sendMessage("Table created!");
 					bjs.createTable(this);
-				}
+					break;
+				}	
 			}
-		} catch (IOException ioe) {
-			System.out.println("ioe in PlayerThread.run(): " + ioe.getMessage());
+			
+			while (true) {
+				this.sendMessage("In table!");
+				lock.lock();
+				if (!isFirst) canPlay.await();
+				else isFirst = false;
+				this.sendMessage("It is your turn");
+				while (!line.contains("END_OF_MESSAGE")) {
+					table.broadcast(line, this);
+					line = br.readLine();
+				}
+				
+				lock.unlock();
+				table.signalNextMessenger();
+				line = "";
+			
+			}
+			
+			
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
 		}
 	}
 }

@@ -9,7 +9,6 @@ public class BJServer {
 	
 	private ArrayList<TableThread> tables = new ArrayList<TableThread>();
 	private ArrayList<PlayerThread> playersOnline = new ArrayList<PlayerThread>();
-	private ObjectOutputStream outStream = null;
 	
 	public BJServer(int port) {
 		try {
@@ -21,8 +20,9 @@ public class BJServer {
 				System.out.println("Connection from: " + s.getInetAddress()); 
 				PlayerThread pt = new PlayerThread(this, s);
 				playersOnline.add(pt);
+				System.out.println("Amount of people online: " + playersOnline.size());
 			}
-		} catch(IOException ioe) {
+		} catch (IOException ioe) {
 			System.out.println("ioe in Server constructor: " + ioe.getMessage());
 		}
 	}
