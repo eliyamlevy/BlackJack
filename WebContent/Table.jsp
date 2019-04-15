@@ -7,7 +7,7 @@
 			var socket;
 			
 			function connectToServer() {
-				socket = new WebSocket("ws://localhost:8080/BlackJackProject/chat1");
+				socket = new WebSocket("ws://localhost:8080/BlackJackProject/bjs");
 				socket.onopen = function(event) {
 					document.getElementById("mychat").innerHTML += "Connected!<br />";
 				}
