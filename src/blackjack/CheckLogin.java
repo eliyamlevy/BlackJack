@@ -25,6 +25,9 @@ public class CheckLogin extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		HttpSession session = request.getSession();
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
@@ -50,7 +53,7 @@ public class CheckLogin extends HttpServlet {
 			
 			try {
 				Class.forName("com.mysql.cj.jdbc.Driver");
-				conn = DriverManager.getConnection("jdbc:mysql://localhost/BlackJackDB?user=INSERTUSERNAME&password=INSERTPASSWORD");
+				conn = DriverManager.getConnection("jdbc:mysql://localhost/BlackJackDB?user=root&password=0330");
 				ps = conn.prepareStatement("SELECT username, password from Users WHERE username=?");
 				ps.setString(1, username);
 				rs = ps.executeQuery();
@@ -64,10 +67,13 @@ public class CheckLogin extends HttpServlet {
 				}
 
 				else {
+					session.setAttribute("login", true);
 					session.setAttribute("user", username);
 				}
 				
-			} catch (SQLException | ClassNotFoundException sqle) {
+			} catch (ClassNotFoundException nfe) {
+				System.out.println(nfe.getMessage());
+			} catch (SQLException sqle) {
 				System.out.print(sqle.getMessage());
 			}	
 			
@@ -75,11 +81,6 @@ public class CheckLogin extends HttpServlet {
 		
 		writer.flush();
 		writer.close();
-
-	}
-
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-			doGet(request, response);	
 	}
 
 }
