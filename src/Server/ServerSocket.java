@@ -10,9 +10,13 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
-@ServerEndpoint(value = "/chat1")
+
+@ServerEndpoint(value = "/bjs")
 public class ServerSocket {
 	private static Vector<Session> sessionVector = new Vector<Session>();
+	private static Vector<TableThread> tables = new Vector<TableThread>();
+	private static Vector<PlayerThread> players = new Vector<PlayerThread>();
+	
 	
 	@OnOpen
 	public void open(Session session) {
@@ -29,8 +33,7 @@ public class ServerSocket {
 			} catch (IOException e) {
 				System.out.println("IOE: " + e.getMessage());
 			}
-		}
-			
+		}	
 	}
 	
 	@OnClose
