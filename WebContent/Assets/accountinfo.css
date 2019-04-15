@@ -25,7 +25,7 @@
 
 #avatar {
 	position: relative;
-    margin-left: 10%;
+    left: 20%;
     margin-top: 10%;
 }
 
@@ -33,6 +33,11 @@
 	position: absolute;
     top: 20%;
     left: 55%;
+}
+
+#info {
+	position: relative;
+	left: 20%;
 }
 
 #toleader {
@@ -43,4 +48,5 @@
     padding: 1%;
     border-color: red;
     position: relative;
+    left: 20%;
 }

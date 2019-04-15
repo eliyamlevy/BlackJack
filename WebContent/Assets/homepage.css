@@ -1,5 +1,10 @@
 @charset "UTF-8";
 
+body{
+	background-corlor: black;
+	color: white;
+}
+
 #background {
 	position:fixed;
 	background-image: url("homepage.jpg"); 
@@ -35,7 +40,7 @@ h1 {
 #userInfo {
 	background-color: #85ff008a;
 	width: 15vw;
-	height: 25vh;
+	height: 30vh;
 	left: 1vw;
 	top: 10vh;
 	position: fixed;
@@ -43,9 +48,20 @@ h1 {
 	border-radius: 1vw;
 }
 
+#username {
+	display: block;
+	text-align: center;
+}
+
+#avatar {
+	position: fixed;
+	top: 16%;
+	left: 4.5%;
+}
+
 #moreInfo {
-	top: 30vh;
-	left: 10vw;
+	top: 33vh;
+	left: 9vw;
 	position: fixed;
 	background-color: white;
 	border-radius: 1vh;

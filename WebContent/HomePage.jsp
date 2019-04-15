@@ -1,6 +1,17 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <!DOCTYPE html>
+
+<%
+	boolean login = (boolean)session.getAttribute("login");
+	String username;
+	if(login){
+		username = (String)session.getAttribute("user");
+	}
+	else{
+		username = "Guest Player";
+	}
+%>
 <html>
 	<head>
 		<meta charset="UTF-8">
@@ -14,8 +25,16 @@
 		</div>
 		
 		<div id="userInfo">
-			<div id="avatar"></div>
-			<button id="moreInfo">More Info...</button>
+			<%
+				if(login){
+			%>
+				<button id="newTable" onclick="window.location='CreateTable.jsp'">New Table</button>
+				<button id="moreInfo" onclick="window.location='AccountInfo.jsp'">More Info...</button>
+			<%
+				}
+			%>
+			<div id="avatar"><img src="Assets/jeffrey_miller.jpg"></div>
+			<span id="username"><%=username %></span>
 		</div>
 	</body>
 </html>
