@@ -24,7 +24,7 @@ public class ClientRunner extends Thread {
 			Scanner scan = new Scanner(System.in);
 			while (true) {
 				String line = scan.nextLine();
-				pw.println("Sam: " + line);
+				pw.println(line);
 				pw.flush();
 			}
 
