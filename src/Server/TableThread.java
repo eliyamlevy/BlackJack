@@ -1,5 +1,4 @@
 package Server;
-import java.util.ArrayList;
 import java.util.Vector;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -12,12 +11,10 @@ public class TableThread extends Thread{
 	private Vector <Condition> playerConditions;
 	private int maxPlayers;
 	private int curPlayer;
-	private BJServer bjs;
 	
-	public TableThread(PlayerThread opt, BJServer bjs,int max) {
+	public TableThread(PlayerThread opt, int max) {
 		this.owner = opt;
 		this.maxPlayers = max;
-		this.bjs = bjs;
 		players.add(opt);
 		this.start();
 	}
@@ -41,17 +38,17 @@ public class TableThread extends Thread{
 		playerConditions = new Vector<Condition>();
 		curPlayer = 0;
 		
-		bjs.PrintMessage("waiting");
+		System.out.println("waiting");
 //		while (players.size() < max) {
 //			bjs.PrintMessage(".");
 //		}
 		
-		bjs.PrintMessage("Table created, prompting owner");
+		System.out.println("Table created, prompting owner");
 		
 		while (!owner.ready) {
 		}
 		
-		bjs.PrintMessage("Table is ready.");
+		System.out.println("Table is ready.");
 			
 		for (int i = 0; i<players.size(); i++) {
 			
