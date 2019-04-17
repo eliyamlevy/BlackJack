@@ -19,14 +19,24 @@
 				}
 			}
 			
-			function sendMessage() {
-				socket.send("Bam: " + document.chatForm.message.value);
+			function sendCommand() {
+				socket.send(document.chatForm.message.value);
+				return false;
+			}
+			
+			function createTable() {
+				socket.send("yamio|CMD|NEWTABLE|6");
 				return false;
 			}
 		</script>
 	</head>
 	<body onload="connectToServer()">
-		<form name="chatForm" onsubmit="return sendMessage()">
+		<form name="chatForm" onsubmit="return sendCommand()">
+			<input type="text" name="message"> <br />
+			<input type="submit" name="submit" value="Send Message">
+		</form>
+		<br />
+		<form name="chatForm" onsubmit="return createTable()">
 			<input type="text" name="message"> <br />
 			<input type="submit" name="submit" value="Send Message">
 		</form>

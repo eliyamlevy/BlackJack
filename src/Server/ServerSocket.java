@@ -30,31 +30,34 @@ public class ServerSocket {
 	@OnMessage
 	public void onMessage(String message, Session session) {
 		sc = new Scanner(message);
-		sc.useDelimiter("|");
+		sc.useDelimiter("\\|");
 		String username = sc.next();
+		System.out.println("Username:" + username);
 		String typeTag = sc.next();
-		if(typeTag == "CMD") {
+		System.out.println("Type:" + typeTag);
+		if(typeTag.equals("CMD")) {
 			String command = sc.next();
+			System.out.println("Command:" + command);
 			//Join table logic
-			if(command == "NEWTABLE") {
+			if(command.equals("NEWTABLE")) {
 				String numPlayers = sc.next();
 				int maxNum = Integer.parseInt(numPlayers);
 				System.out.println("Table created!");
-				PlayerThread pt = new PlayerThread(username, session);
-				createTable(pt, maxNum);
+//				PlayerThread pt = new PlayerThread(username, session);
+//				createTable(pt, maxNum);
 //				this.sendMessage("Start Hand?");
 //				line = br.readLine();
 //				while (!line.contains("YES")) {}
-				pt.ready = true;
+//				pt.ready = true;
 			}
-			else if (command == "JOINTABLE") {
+			else if (command.equals("JOINTABLE")) {
 //				this.sendMessage("Available Tables:");
 				int tableNum = Integer.parseInt(sc.next());
 				TableThread t = tables.get(tableNum);
 				if (t.GetOpenSpots() > 0) {
 					System.out.println("Adding player " + username + " to table " + tableNum);
-					PlayerThread pt = new PlayerThread(username, session);
-					joinTable(pt, tableNum);
+//					PlayerThread pt = new PlayerThread(username, session);
+//					joinTable(pt, tableNum);
 					try {
 						session.getBasicRemote().sendText("Joined table: " + tableNum);
 					} catch (IOException e) {
@@ -74,10 +77,10 @@ public class ServerSocket {
 				}
 			}
 		}
-		else if(typeTag == "UPD") {
+		else if(typeTag.equals("UPD")) {
 			
 		}
-		else if(typeTag == "ACT") {
+		else if(typeTag.equals("ACT")) {
 			
 		}
 		for (Session s : sessionVector) {
