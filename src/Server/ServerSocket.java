@@ -68,6 +68,8 @@ public class ServerSocket {
 				
 				if (t.GetOpenSpots() > 0) {
 					System.out.println("Adding player " + username + " to table " + tableNum);
+					broadcastToOthersAtTable("Player " + username + " has joined your table!", session);
+					sendMessage(session, "You have joined table");
 					PlayerThread pt = new PlayerThread(sessionVector.indexOf(session), username);
 					players.add(pt);
 					joinTable(pt, tableNum);
@@ -108,6 +110,20 @@ public class ServerSocket {
 		}
 	}
 	
+	//get the table the current session is at
+	private TableThread getTable(Session s) {
+		
+		int playerIndex = findPlayer(s);
+		PlayerThread player = players.elementAt(playerIndex);
+		
+		for (TableThread t : tables) {
+			if (t.hasPlayer(player)) return t;
+		}
+
+		return null;
+		
+	}
+	
 	private void sendMessage(Session s, String message) {
 		try {
 			s.getBasicRemote().sendText(message);
@@ -136,14 +152,35 @@ public class ServerSocket {
 		System.out.println("Player found at: " + playerIndex);
 		
 		return playerIndex;
+	}
+	
+	public void broadcastToOthersAtTable(String message, Session current) {
+		System.out.println("ServerSocket: Broadcasting message: " + message);
+		TableThread t = getTable(current);
+		Vector<PlayerThread> players = t.getPlayers();
+		PlayerThread currentPlayer = players.get(findPlayer(current));
 		
+		for (PlayerThread pt : players) {
+			if(pt.equals(currentPlayer)) {
+				int sessionIndex = pt.sessionIndex;
+				try {
+					sessionVector.get(sessionIndex).getBasicRemote().sendText(message);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 	
 	@OnClose
 	public void close(Session session) {
 		System.out.println("Disconnecting");
+		//Updates all the player session IDs
+//		for (int i = sessionVector.indexOf(session); i<sessionVector.size(); i++) {
+//			int playerIndex = findPlayer(sessionVector.get(i));
+//			players.get(playerIndex).sessionIndex--;
+//		}
 		sessionVector.remove(session);
-		//ADD LATER TO UPDATE PLAYEr SESSION ID
 	}
 	
 	@OnError
