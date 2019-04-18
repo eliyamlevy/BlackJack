@@ -3,23 +3,16 @@ package Server;
 import java.io.IOException;
 import java.util.Scanner;
 import java.util.Vector;
-
-import javax.websocket.OnClose;
-import javax.websocket.OnError;
-import javax.websocket.OnMessage;
-import javax.websocket.OnOpen;
-import javax.websocket.Session;
+import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 
-
-@ServerEndpoint(value = "/bjs")
+@ServerEndpoint(value = "/ws")
 public class ServerSocket {
+	
 	private static Vector<Session> sessionVector = new Vector<Session>();
-	private static Vector<TableThread> tables = new Vector<TableThread>();
 	private static Vector<PlayerThread> players = new Vector<PlayerThread>();
-	
+	private static Vector<TableThread> tables = new Vector<TableThread>();
 	private static Scanner sc;
-	
 	
 	@OnOpen
 	public void open(Session session) {
@@ -29,101 +22,97 @@ public class ServerSocket {
 	
 	@OnMessage
 	public void onMessage(String message, Session session) {
+		System.out.println(message);
+		
 		sc = new Scanner(message);
 		sc.useDelimiter("\\|");
 		String username = sc.next();
 		System.out.println("Username:" + username);
 		String typeTag = sc.next();
 		System.out.println("Type:" + typeTag);
-		if(typeTag.equals("CMD")) {
+		
+		if (typeTag.equals("CMD")) {
+			
 			String command = sc.next();
 			System.out.println("Command:" + command);
-			//Join table logic
-			if(command.equals("NEWTABLE")) {
-				String numPlayers = sc.next();
-				int maxNum = Integer.parseInt(numPlayers);
-				System.out.println("Table of size " + maxNum + " created!");
-				PlayerThread pt = new PlayerThread(sessionVector.indexOf(session), username);
-				createTable(pt, maxNum);
+			
+			if (command.equals("JOIN")) {
 				
-				//TODO
-//				this.sendMessage("Start Hand?");
-//				line = br.readLine();
-//				while (!line.contains("YES")) {}
-				
-				
-				pt.ready = true;
-				System.out.println("asdf");
-			}
-			else if (command.equals("JOINTABLE")) {
-//				this.sendMessage("Available Tables:");
 				int tableNum = Integer.parseInt(sc.next());
-				TableThread t = tables.get(tableNum);
+				TableThread t;
+				
+				try {
+					t = tables.get(tableNum);
+				} catch (Exception e) {
+					System.out.println("Table could not be found.");
+					return;
+				}
+				
+				
 				if (t.GetOpenSpots() > 0) {
 					System.out.println("Adding player " + username + " to table " + tableNum);
-					PlayerThread pt = new PlayerThread(sessionVector.indexOf(session), username);
+					PlayerThread pt = new PlayerThread(players.size(), username);
 					joinTable(pt, tableNum);
-					try {
-						session.getBasicRemote().sendText("Joined table: " + tableNum);
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					
-					//TODO
-//					t.broadcast("Player has joined this table.", this);
+					System.out.println("Table joined!");
 				}
+				
 				else {
-					try {
-						session.getBasicRemote().sendText("TABLEFULL");
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					
+					System.out.println("Table is full.");
+					sendMessage(session, "The table you chose is full.");
+					return;
 					
 				}
+				
+				
 			}
-		}
-		else if(typeTag.equals("UPD")) {
+			
+			else if (command.equals("NEW")) {
+				int maxNum = Integer.parseInt(sc.next());
+				PlayerThread pt = new PlayerThread(players.size(), username);
+				System.out.println("Table created!");
+				createTable(pt, maxNum);
+				System.out.println("There are now " + tables.size() + " tables.");
+			}	
 			
 		}
-		else if(typeTag.equals("ACT")) {
-			
-		}
-		else if(typeTag.equals("TEST")) {
-			while(sc.hasNext()) {
-				System.out.print(sc.next());
-			}
-		}
-		else {
-			message += " Error in parsing action.";
-		}
-		for (Session s : sessionVector) {
-			try {
+		
+		try {
+			for (Session s : sessionVector) {
 				s.getBasicRemote().sendText(message);
-			} catch (IOException e) {
-				System.out.println("IOE: " + e.getMessage());
 			}
-		}	
+		} catch (IOException ioe) {
+			System.out.println("ioe");
+			close(session);
+		}
+	}
+	
+	private void sendMessage(Session s, String message) {
+		try {
+			s.getBasicRemote().sendText(message);
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+		
+	}
+	
+	private void createTable(PlayerThread pt, int max) {
+		tables.add(new TableThread(pt, max));
+	}
+	
+	private void joinTable(PlayerThread pt, int tableNum) {
+		tables.get(tableNum).AddPlayer(pt);
 	}
 	
 	@OnClose
 	public void close(Session session) {
-		System.out.println("Disconnected!");
+		System.out.println("Disconnecting");
 		sessionVector.remove(session);
 	}
 	
 	@OnError
 	public void error(Throwable error) {
-		System.out.println("Error! \n" + error.getMessage());
-	}
-	/**/
-	private void joinTable(PlayerThread pt, int tableNum) {
-		tables.get(tableNum).AddPlayer(pt);
-	}
-	
-	private void createTable(PlayerThread pt, int numPlayers) {
-		tables.add(new TableThread(pt, numPlayers));
+		System.out.println("Error!");
 	}
 	
 }

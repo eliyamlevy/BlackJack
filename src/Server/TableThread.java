@@ -38,16 +38,16 @@ public class TableThread extends Thread{
 		playerConditions = new Vector<Condition>();
 		curPlayer = 0;
 		
-		System.out.println("waiting");
+//		System.out.println("waiting");
 //		while (players.size() < max) {
 //			bjs.PrintMessage(".");
 //		}
 		
-		System.out.println("Table created, prompting owner");
-		
-		while (!owner.ready) {
-		}
-		
+//		System.out.println("Table created, prompting owner");
+//		
+//		while (!owner.ready) {
+//		}
+//		
 		System.out.println("Table is ready.");
 			
 		for (int i = 0; i<players.size(); i++) {
@@ -66,18 +66,18 @@ public class TableThread extends Thread{
 ////			bjs.PrintMessage("Table is running");
 //		}
 		
-		for (int i = 0; i<players.size(); i++) {
-			String message = "Waiting for player " + i;
-			try {
-				this.wait(1000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			this.broadcast(message, players.elementAt(i));
-		}
+//		for (int i = 0; i<players.size(); i++) {
+//			String message = "Waiting for player " + i;
+//			try {
+//				this.wait(1000);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//			this.broadcast(message, players.elementAt(i));
+//		}
 		
-		owner.ready = false;
+//		owner.ready = false;
 		
 	}
 	
