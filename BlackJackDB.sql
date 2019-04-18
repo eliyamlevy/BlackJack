@@ -1,0 +1,14 @@
+DROP DATABASE IF EXISTS BlackJackDB;
+CREATE DATABASE BlackJackDB;
+USE BlackJackDB;
+
+CREATE TABLE Users (
+	userID INT(11) PRIMARY KEY AUTO_INCREMENT,
+    fullName VARCHAR(50) NOT NULL,
+    email VARCHAR(50) NOT NULL,
+    username VARCHAR(50) NOT NULL,
+    password VARCHAR(50) NOT NULL,
+	balance INT(11) NOT NULL,
+    bailoutTokens INT(11) NOT NULL,
+    score INT(11) NOT NULL
+);

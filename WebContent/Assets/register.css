@@ -1,0 +1,65 @@
+@charset "UTF-8";
+
+
+#background {
+	position:fixed;
+	background-image: url("registerBG.jpg");
+	background-repeat: no repeat;
+	background-size: cover;
+	filter: blur(4px);
+	height: 101%;
+	width: 101%;
+	left: -0.5%;
+	top: -0.5%;
+}
+
+#container {
+	color: white;
+	position: fixed;
+	top: 10%;
+	left: 40%;
+	height: 80%;
+	width: 45%;
+	background-color: rgba(169,169,169, 0.5);
+	border-radius: 5%;
+}
+
+#header {
+	font-size: 5vh;
+	display: block;
+	position: relative;
+	padding: 4%;
+	text-align: center;
+}
+
+.form{
+	position: relative;
+	margin-left: 10%;
+	font-size: 3vh;
+	height: 50%;
+}
+
+input {
+	height: 10%;
+	width: 35%;
+	margin-bottom: 2%;
+}
+
+#avatarBlock {
+	text-align: center;
+	position: fixed;
+	width: 20%;
+	height: 45%;
+	top: 21%;
+    left: 62%;
+}
+
+#submit {
+	background-color: red;
+    border-radius: 1vh;
+    color: white;
+    font-size: 50%;
+    padding: 1%;
+    border-color: red;
+    position: relative;
+}
