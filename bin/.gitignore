@@ -1,0 +1,16 @@
+/.DS_Store
+/AIPlayer.class
+/BlackJack.class
+/BlackJackAI.class
+/BlackJackHelpers.class
+/Client/
+/DealerAI.class
+/DealerPlayer.class
+/GenericAI.class
+/HumanPlayer.class
+/Player.class
+/RandomAI.class
+/RiskyAI.class
+/SafeAI.class
+/Server/
+/blackjack/
