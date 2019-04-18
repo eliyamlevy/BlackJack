@@ -32,17 +32,22 @@ public class ServerSocket {
 		System.out.println("Type:" + typeTag);
 		
 		if (typeTag.equals("CMD")) {
+			
 			String command = sc.next();
 			System.out.println("Command:" + command);
 			
 			if (command.equals("JOIN")) {
-				int tableNum = Integer.parseInt(sc.next());
-				TableThread t = tables.get(tableNum);
 				
-				if (t == null) {
+				int tableNum = Integer.parseInt(sc.next());
+				TableThread t;
+				
+				try {
+					t = tables.get(tableNum);
+				} catch (Exception e) {
 					System.out.println("Table could not be found.");
 					return;
 				}
+				
 				
 				if (t.GetOpenSpots() > 0) {
 					System.out.println("Adding player " + username + " to table " + tableNum);
@@ -52,8 +57,11 @@ public class ServerSocket {
 				}
 				
 				else {
+					
 					System.out.println("Table is full.");
+					sendMessage(session, "The table you chose is full.");
 					return;
+					
 				}
 				
 				
@@ -77,6 +85,15 @@ public class ServerSocket {
 			System.out.println("ioe");
 			close(session);
 		}
+	}
+	
+	private void sendMessage(Session s, String message) {
+		try {
+			s.getBasicRemote().sendText(message);
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+		
 	}
 	
 	private void createTable(PlayerThread pt, int max) {
