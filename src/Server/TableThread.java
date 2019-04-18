@@ -5,7 +5,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class TableThread extends Thread{
-	public PlayerThread owner = null;
+	public static PlayerThread owner = null;
 	private Vector<PlayerThread> players = new Vector<PlayerThread>();
 	private Vector <Lock> playerLocks;
 	private Vector <Condition> playerConditions;
@@ -13,7 +13,7 @@ public class TableThread extends Thread{
 	private int curPlayer;
 	
 	public TableThread(PlayerThread opt, int max) {
-		this.owner = opt;
+		owner = opt;
 		this.maxPlayers = max;
 		players.add(opt);
 		this.start();
@@ -38,34 +38,40 @@ public class TableThread extends Thread{
 		playerConditions = new Vector<Condition>();
 		curPlayer = 0;
 		
-//		System.out.println("waiting");
-//		while (players.size() < max) {
-//			bjs.PrintMessage(".");
-//		}
+		System.out.println("TableThread: waiting");
+
+		System.out.println("TableThread: Table created, prompting owner");
 		
-//		System.out.println("Table created, prompting owner");
-//		
-//		while (!owner.ready) {
-//		}
-//		
-		System.out.println("Table is ready.");
-			
-		for (int i = 0; i<players.size(); i++) {
-			
-			Lock newLock = new ReentrantLock();
-			Condition canPlay = newLock.newCondition();
-			playerLocks.add(newLock);
-			playerConditions.add(canPlay);
-			
-			if (i==0) players.get(i).set(this, newLock, canPlay, true);
-			else players.get(i).set(this, newLock, canPlay, false);
-			
+		Boolean oReady = owner.isReady();
+		
+		while (!oReady) {
+			oReady = owner.isReady();
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
+		
+		System.out.println("TableThread: Table is ready.");
+			
+//		for (int i = 0; i<players.size(); i++) {
+//			
+//			Lock newLock = new ReentrantLock();
+//			Condition canPlay = newLock.newCondition();
+//			playerLocks.add(newLock);
+//			playerConditions.add(canPlay);
+//			
+//			if (i==0) players.get(i).set(this, newLock, canPlay, true);
+//			else players.get(i).set(this, newLock, canPlay, false);
+//			
+//		}
 		
 //		while (true) { //keep table running
 ////			bjs.PrintMessage("Table is running");
 //		}
-		
+		 
 //		for (int i = 0; i<players.size(); i++) {
 //			String message = "Waiting for player " + i;
 //			try {
@@ -77,7 +83,7 @@ public class TableThread extends Thread{
 //			this.broadcast(message, players.elementAt(i));
 //		}
 		
-//		owner.ready = false;
+		owner.SetReady(false);
 		
 	}
 	
