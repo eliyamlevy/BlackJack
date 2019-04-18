@@ -42,13 +42,18 @@ public class ServerSocket {
 			if(command.equals("NEWTABLE")) {
 				String numPlayers = sc.next();
 				int maxNum = Integer.parseInt(numPlayers);
-				System.out.println("Table created!");
-//				PlayerThread pt = new PlayerThread(username, session);
-//				createTable(pt, maxNum);
+				System.out.println("Table of size " + maxNum + " created!");
+				PlayerThread pt = new PlayerThread(sessionVector.indexOf(session), username);
+				createTable(pt, maxNum);
+				
+				//TODO
 //				this.sendMessage("Start Hand?");
 //				line = br.readLine();
 //				while (!line.contains("YES")) {}
-//				pt.ready = true;
+				
+				
+				pt.ready = true;
+				System.out.println("asdf");
 			}
 			else if (command.equals("JOINTABLE")) {
 //				this.sendMessage("Available Tables:");
@@ -56,14 +61,16 @@ public class ServerSocket {
 				TableThread t = tables.get(tableNum);
 				if (t.GetOpenSpots() > 0) {
 					System.out.println("Adding player " + username + " to table " + tableNum);
-//					PlayerThread pt = new PlayerThread(username, session);
-//					joinTable(pt, tableNum);
+					PlayerThread pt = new PlayerThread(sessionVector.indexOf(session), username);
+					joinTable(pt, tableNum);
 					try {
 						session.getBasicRemote().sendText("Joined table: " + tableNum);
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
+					
+					//TODO
 //					t.broadcast("Player has joined this table.", this);
 				}
 				else {
@@ -83,6 +90,14 @@ public class ServerSocket {
 		else if(typeTag.equals("ACT")) {
 			
 		}
+		else if(typeTag.equals("TEST")) {
+			while(sc.hasNext()) {
+				System.out.print(sc.next());
+			}
+		}
+		else {
+			message += " Error in parsing action.";
+		}
 		for (Session s : sessionVector) {
 			try {
 				s.getBasicRemote().sendText(message);
@@ -100,9 +115,9 @@ public class ServerSocket {
 	
 	@OnError
 	public void error(Throwable error) {
-		System.out.println("Error!");
+		System.out.println("Error! \n" + error.getMessage());
 	}
-	
+	/**/
 	private void joinTable(PlayerThread pt, int tableNum) {
 		tables.get(tableNum).AddPlayer(pt);
 	}
@@ -110,4 +125,5 @@ public class ServerSocket {
 	private void createTable(PlayerThread pt, int numPlayers) {
 		tables.add(new TableThread(pt, numPlayers));
 	}
+	
 }
