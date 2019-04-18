@@ -1,8 +1,13 @@
 package blackjack;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -20,6 +25,10 @@ public class CheckLogin extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		HttpSession session = request.getSession();
 		String username = request.getParameter("username");
 		String password = request.getParameter("password");
 		Boolean valid = true;
@@ -43,7 +52,8 @@ public class CheckLogin extends HttpServlet {
 			ResultSet rs = null;
 			
 			try {
-				conn = DriverManager.getConnection("jdbc:mysql://localhost/BlackJackDB?user=INSERTUSERNAME&password=INSERTPASSWORD");
+				Class.forName("com.mysql.cj.jdbc.Driver");
+				conn = DriverManager.getConnection("jdbc:mysql://localhost/BlackJackDB?user=root&password=0330");
 				ps = conn.prepareStatement("SELECT username, password from Users WHERE username=?");
 				ps.setString(1, username);
 				rs = ps.executeQuery();
@@ -54,6 +64,11 @@ public class CheckLogin extends HttpServlet {
 				
 				else if (!rs.getString("password").equals(password)) {
 					writer.println("Incorrect password.");
+				}
+
+				else {
+					session.setAttribute("login", true);
+					session.setAttribute("user", username);
 				}
 				
 			} catch (ClassNotFoundException nfe) {
@@ -66,11 +81,6 @@ public class CheckLogin extends HttpServlet {
 		
 		writer.flush();
 		writer.close();
-
-	}
-
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-			doGet(request, response);	
 	}
 
 }

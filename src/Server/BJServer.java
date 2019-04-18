@@ -9,7 +9,6 @@ public class BJServer {
 	
 	private ArrayList<TableThread> tables = new ArrayList<TableThread>();
 	private ArrayList<PlayerThread> playersOnline = new ArrayList<PlayerThread>();
-	private ObjectOutputStream outStream = null;
 	
 	public BJServer(int port) {
 		try {
@@ -21,8 +20,9 @@ public class BJServer {
 				System.out.println("Connection from: " + s.getInetAddress()); 
 				PlayerThread pt = new PlayerThread(this, s);
 				playersOnline.add(pt);
+				System.out.println("Amount of people online: " + playersOnline.size());
 			}
-		} catch(IOException ioe) {
+		} catch (IOException ioe) {
 			System.out.println("ioe in Server constructor: " + ioe.getMessage());
 		}
 	}
@@ -31,8 +31,26 @@ public class BJServer {
 		BJServer bjServer = new BJServer(6969);
 	}
 	
-	public void createTable(PlayerThread pt) {
-		TableThread tbt = new TableThread(pt);
+	public void createTable(PlayerThread pt, int max) {
+		TableThread tbt = new TableThread(pt, this, max);
 		tables.add(tbt);
 	}
+	
+	public TableThread getTable(int index) {
+		return tables.get(index);
+	}
+	
+	public ArrayList<TableThread> allTables() {
+		return tables;
+	}
+	
+	public void joinTable(PlayerThread pt, int index) {
+		System.out.println("Player joining table " + index);
+		tables.get(index).AddPlayer(pt);
+	}
+	
+	public void PrintMessage(String message) {
+		System.out.println("Table: " + message);
+	}
+	
 }
