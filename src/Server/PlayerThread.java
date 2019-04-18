@@ -7,7 +7,7 @@ public class PlayerThread extends Thread{
 	public int sessionIndex;
 	private TableThread table;
 	private Boolean ready = false;
-	private String username;
+	public String username;
 	private String action = null;
 	private Lock lock;
 	private Condition canPlay;

@@ -29,9 +29,8 @@ public class ServerSocket {
 		System.out.println("Username:" + username);
 		String typeTag = sc.next();
 		System.out.println("Type:" + typeTag);
-		
+		//Inside game logic
 		if (typeTag.equals("ACT")) {
-			
 			String command = sc.next();
 			System.out.println("Command:" + command);
 			
@@ -47,14 +46,21 @@ public class ServerSocket {
 				//starts hand on table when owner ready
 				players.get(findPlayer(session)).SetReady(true);
 			}
+			else if(command.equals("HIT")) {
+				players.get(findPlayer(session)).setAction(message);
+			}
+			else if(command.equals("STAY")) {
+				players.get(findPlayer(session)).setAction(message);
+			}
+			else if(command.equals("LEAVE")) {
+				players.get(findPlayer(session)).setAction(message);
+			}
 		}
-		
+		//Outside of game logic
 		else if (typeTag.equals("CMD")) {
 			String command = sc.next();
 			System.out.println("Command:" + command);
-			
 			if (command.equals("JOINTABLE")) {
-				
 				int tableNum = Integer.parseInt(sc.next());
 				TableThread t;
 				//COME BACK
@@ -64,8 +70,6 @@ public class ServerSocket {
 					System.out.println("Table could not be found.");
 					return;
 				}
-				
-				
 				if (t.GetOpenSpots() > 0) {
 					System.out.println("Adding player " + username + " to table " + tableNum);
 					broadcastToOthersAtTable("Player " + username + " has joined your table!", session);
@@ -76,18 +80,12 @@ public class ServerSocket {
 					System.out.println("Table joined!");
 					//update everyone else who is in that table, that someone else has joined
 				}
-				
 				else {
-					
 					System.out.println("Table is full.");
 					sendMessage(session, "The table you chose is full.");
 					return;
-					
 				}
-				
-				
 			}
-			
 			else if (command.equals("NEWTABLE")) {
 				int maxNum = Integer.parseInt(sc.next());
 				PlayerThread pt = new PlayerThread(sessionVector.indexOf(session), username);
@@ -97,7 +95,14 @@ public class ServerSocket {
 				//sendMessage to the owner, saying send ready or something if you're done
 				System.out.println("There are now " + tables.size() + " tables.");
 			}	
-			
+			else if (command.equals("LIST")) {
+				//sendMessage to the owner, saying send ready or something if you're done
+				System.out.println("Sending table list");
+				for (int i = 0; i < tables.size(); i++) {
+					String tList = "Table " + i + " has " + tables.get(i).GetOpenSpots() + "\n\t Owned by " + tables.get(i).owner.username;
+					session.getBasicRemote().sendText(tList);
+				}
+			}
 		}
 		
 		try {
