@@ -2,23 +2,43 @@ package Server;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 
-import javax.websocket.Session;
-
 public class PlayerThread extends Thread{
 	
-	int sessionIndex;
+	public int sessionIndex;
 	private TableThread table;
-	public Boolean ready = false;
+	private Boolean ready = false;
 	private String username;
-	
+	private String action = null;
 	private Lock lock;
 	private Condition canPlay;
 	private boolean isFirst = false;
+	private boolean isTurn = false;
+	private String result = null;
 	
 	public PlayerThread(int index, String username) {
 		this.username = username;
 		this.sessionIndex = index;
 		this.start();
+	}
+	
+	public void SetReady(Boolean r) {
+		ready = r;
+		if (ready) {
+			System.out.println("PlayerThread: Player " + username + " is ready.");
+		}
+		
+		else {
+			System.out.println("PlayerThread: Player " + username + " is not ready.");
+		}
+	}
+	
+	public void setAction(String input) {
+		action = input;
+		System.out.println("PlayerThread: Player Action" + input);
+	}
+	
+	public Boolean isReady() {
+		return ready;
 	}
 	
 	public void sendMessage(String message) {
@@ -35,46 +55,16 @@ public class PlayerThread extends Thread{
 	@Override
 	public void run() {
 		try {
-			String line = "";
-			
 			while (true) {
-				
-				this.sendMessage("In table!");
-				
-				lock.lock();
-				if (!isFirst) canPlay.await();
-				else isFirst = false;
-				this.sendMessage("It is your turn");
-				//TODO
-//				line = br.readLine();
-				
-				if (line.contains("LEAVE")) {
-					table.RemovePlayer(this); //check for owner!
-					table = null;
-					lock = null;
-					canPlay = null;
-					isFirst = false;
+				if(this.isTurn) {
+					if(this.action != null) {
+						//Do action
+						System.out.println("PlayerThread: Perfoming action: " + action);
+						action = null;
+						this.isTurn = false;
+					}
 				}
-				
-//				else if (line.contains("HIT")) {
-//					
-//				}
-//				
-//				else if (line.contains("STAY")) {
-//					
-//				}
-//				
-//				if (line.contains("BET")) {
-//					
-//				}
-				
-				lock.unlock();
-				table.signalNextMessenger();
-				line = "";
-			
 			}
-			
-			
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
@@ -82,5 +72,25 @@ public class PlayerThread extends Thread{
 	
 	public TableThread getTable() {
 		return table;
+	}
+	
+	public boolean isTurn() {
+		return this.isTurn;
+	}
+	
+	public void setTurn(boolean turn) {
+		this.isTurn = turn;
+	}
+	
+	public String getResult() {
+		while(this.result == null) {
+		}
+		String result = this.result;
+		this.result = null;
+		return result;
+	}
+	
+	public void setResult(String result) {
+		this.result = result;
 	}
 }

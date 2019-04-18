@@ -23,7 +23,6 @@ public class ServerSocket {
 	@OnMessage
 	public void onMessage(String message, Session session) {
 		System.out.println(message);
-		
 		sc = new Scanner(message);
 		sc.useDelimiter("\\|");
 		String username = sc.next();
@@ -31,16 +30,34 @@ public class ServerSocket {
 		String typeTag = sc.next();
 		System.out.println("Type:" + typeTag);
 		
-		if (typeTag.equals("CMD")) {
+		if (typeTag.equals("ACT")) {
 			
 			String command = sc.next();
 			System.out.println("Command:" + command);
 			
-			if (command.equals("JOIN")) {
+			/*
+			 * Basic format for player action
+			 * Receive action from client (message from session)
+			 * find corresponding PlayerThread pt
+			 * call pt.setAction(message);
+			 * call String result = pt.getResult();
+			 */
+			
+			if (command.equals("READY")) {
+				//starts hand on table when owner ready
+				players.get(findPlayer(session)).SetReady(true);
+			}
+		}
+		
+		else if (typeTag.equals("CMD")) {
+			String command = sc.next();
+			System.out.println("Command:" + command);
+			
+			if (command.equals("JOINTABLE")) {
 				
 				int tableNum = Integer.parseInt(sc.next());
 				TableThread t;
-				
+				//COME BACK
 				try {
 					t = tables.get(tableNum);
 				} catch (Exception e) {
@@ -51,9 +68,11 @@ public class ServerSocket {
 				
 				if (t.GetOpenSpots() > 0) {
 					System.out.println("Adding player " + username + " to table " + tableNum);
-					PlayerThread pt = new PlayerThread(players.size(), username);
+					PlayerThread pt = new PlayerThread(sessionVector.indexOf(session), username);
+					players.add(pt);
 					joinTable(pt, tableNum);
 					System.out.println("Table joined!");
+					//update everyone else who is in that table, that someone else has joined
 				}
 				
 				else {
@@ -67,11 +86,13 @@ public class ServerSocket {
 				
 			}
 			
-			else if (command.equals("NEW")) {
+			else if (command.equals("NEWTABLE")) {
 				int maxNum = Integer.parseInt(sc.next());
-				PlayerThread pt = new PlayerThread(players.size(), username);
-				System.out.println("Table created!");
+				PlayerThread pt = new PlayerThread(sessionVector.indexOf(session), username);
+				players.add(pt);
+				System.out.println("Table created! for " + findPlayer(session));
 				createTable(pt, maxNum);
+				//sendMessage to the owner, saying send ready or something if you're done
 				System.out.println("There are now " + tables.size() + " tables.");
 			}	
 			
@@ -104,10 +125,25 @@ public class ServerSocket {
 		tables.get(tableNum).AddPlayer(pt);
 	}
 	
+	private int findPlayer(Session s) {
+		int index = sessionVector.indexOf(s);
+		int playerIndex = 0;
+		
+		for (int i = 0; i<players.size(); i++) {
+			if (players.get(i).sessionIndex == index) playerIndex = i;
+		}
+		
+		System.out.println("Player found at: " + playerIndex);
+		
+		return playerIndex;
+		
+	}
+	
 	@OnClose
 	public void close(Session session) {
 		System.out.println("Disconnecting");
 		sessionVector.remove(session);
+		//ADD LATER TO UPDATE PLAYEr SESSION ID
 	}
 	
 	@OnError
