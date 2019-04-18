@@ -6,7 +6,7 @@ import javax.websocket.Session;
 
 public class PlayerThread extends Thread{
 	
-	private Session s;
+	int sessionIndex;
 	private TableThread table;
 	public Boolean ready = false;
 	private String username;
@@ -15,9 +15,9 @@ public class PlayerThread extends Thread{
 	private Condition canPlay;
 	private boolean isFirst = false;
 	
-	public PlayerThread(String username, Session s) {
+	public PlayerThread(int index, String username) {
 		this.username = username;
-		this.s = s;
+		this.sessionIndex = index;
 		this.start();
 	}
 	
