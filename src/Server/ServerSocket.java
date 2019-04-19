@@ -76,6 +76,7 @@ public class ServerSocket {
 					t = tables.get(tableNum);
 				} catch (Exception e) {
 					System.out.println("Table could not be found.");
+					sendMessage(session, "Table could not be found.");
 					return;
 				}
 				
@@ -85,8 +86,8 @@ public class ServerSocket {
 					joinTable(pt, tableNum);
 					System.out.println("Adding player " + username + " to table " + tableNum);
 					broadcastToOthersAtTable("Player " + username + " has joined your table!", session);
-					sendMessage(session, "You have joined table");
-
+					broadcastToOthersAtTable("UPD|INTABLE|" + t.getPlayers().size(), session);
+					sendMessage(session, "UPD|INTABLE|" + t.getPlayers().size());
 					System.out.println("Table joined!");
 					//update everyone else who is in that table, that someone else has joined
 				}
@@ -104,6 +105,7 @@ public class ServerSocket {
 				createTable(pt, maxNum);
 				//sendMessage to the owner, saying send ready or something if you're done
 				System.out.println("There are now " + tables.size() + " tables.");
+				sendMessage(session, "UPD|INTABLE|1");
 			}	
 			else if (command.equals("LIST")) {
 				//sendMessage to the owner, saying send ready or something if you're done
@@ -193,6 +195,15 @@ public class ServerSocket {
 			System.out.println("Session " + i + " is linked to player " + findPlayer(sessionVector.get(i)));
 		}
 		
+		//if this is the last open session, just reset everything so we don't have random tables left open
+		if (sessionVector.size() == 1) {
+			tables.clear();
+			players.clear();
+			sessionVector.clear();
+			System.out.println("Socket: Everything reset to 0.");
+			return;
+		}
+		
 		//Updates all the player session IDs
 		for (int i = sessionVector.indexOf(session)+1; i<sessionVector.size(); i++) {
 			int playerIndex = findPlayer(sessionVector.get(i));
@@ -212,7 +223,6 @@ public class ServerSocket {
 		for (int i = 0; i<sessionVector.size(); i++) {
 			System.out.println("Session " + i + " is linked to player " + findPlayer(sessionVector.get(i)));
 		}
-		
 		
 	}
 	
