@@ -46,6 +46,13 @@ public class ServerSocket {
 				//starts hand on table when owner ready
 				players.get(findPlayer(session)).SetReady(true);
 			}
+			
+			else if (command.equals("START")) {
+				//starts hand on table when owner ready
+				players.get(findPlayer(session)).SetStart(true);
+			}
+			
+			
 			else if(command.equals("HIT")) {
 				players.get(findPlayer(session)).setAction(message);
 			}
@@ -54,6 +61,7 @@ public class ServerSocket {
 			}
 			else if(command.equals("LEAVE")) {
 				players.get(findPlayer(session)).setAction(message);
+				
 			}
 		}
 		//Outside of game logic
@@ -70,13 +78,15 @@ public class ServerSocket {
 					System.out.println("Table could not be found.");
 					return;
 				}
+				
 				if (t.GetOpenSpots() > 0) {
-					System.out.println("Adding player " + username + " to table " + tableNum);
-					broadcastToOthersAtTable("Player " + username + " has joined your table!", session);
-					sendMessage(session, "You have joined table");
 					PlayerThread pt = new PlayerThread(sessionVector.indexOf(session), username);
 					players.add(pt);
 					joinTable(pt, tableNum);
+					System.out.println("Adding player " + username + " to table " + tableNum);
+					broadcastToOthersAtTable("Player " + username + " has joined your table!", session);
+					sendMessage(session, "You have joined table");
+
 					System.out.println("Table joined!");
 					//update everyone else who is in that table, that someone else has joined
 				}
@@ -100,7 +110,7 @@ public class ServerSocket {
 				System.out.println("Sending table list");
 				for (int i = 0; i < tables.size(); i++) {
 					String tList = "Table " + i + " has " + tables.get(i).GetOpenSpots() + "\n\t Owned by " + tables.get(i).owner.username;
-					session.getBasicRemote().sendText(tList);
+					sendMessage(session, tList);
 				}
 			}
 		}
@@ -148,7 +158,7 @@ public class ServerSocket {
 	
 	private int findPlayer(Session s) {
 		int index = sessionVector.indexOf(s);
-		int playerIndex = 0;
+		int playerIndex = -1;
 		
 		for (int i = 0; i<players.size(); i++) {
 			if (players.get(i).sessionIndex == index) playerIndex = i;
@@ -166,13 +176,9 @@ public class ServerSocket {
 		PlayerThread currentPlayer = players.get(findPlayer(current));
 		
 		for (PlayerThread pt : players) {
-			if(pt.equals(currentPlayer)) {
+			if(!pt.equals(currentPlayer)) {
 				int sessionIndex = pt.sessionIndex;
-				try {
-					sessionVector.get(sessionIndex).getBasicRemote().sendText(message);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				sendMessage(sessionVector.get(sessionIndex), message);
 			}
 		}
 	}
@@ -180,12 +186,34 @@ public class ServerSocket {
 	@OnClose
 	public void close(Session session) {
 		System.out.println("Disconnecting");
+		
+		System.out.println("Before closing: ");
+		
+		for (int i = 0; i<sessionVector.size(); i++) {
+			System.out.println("Session " + i + " is linked to player " + findPlayer(sessionVector.get(i)));
+		}
+		
 		//Updates all the player session IDs
-//		for (int i = sessionVector.indexOf(session); i<sessionVector.size(); i++) {
-//			int playerIndex = findPlayer(sessionVector.get(i));
-//			players.get(playerIndex).sessionIndex--;
-//		}
+		for (int i = sessionVector.indexOf(session)+1; i<sessionVector.size(); i++) {
+			int playerIndex = findPlayer(sessionVector.get(i));
+			if (playerIndex == -1) continue;
+			players.get(playerIndex).sessionIndex--;
+			System.out.println("Socket: player index" + playerIndex + " decremented to " + players.get(playerIndex).sessionIndex);
+		}
+		
+		int removePlayer = findPlayer(session);
+		
+		if (removePlayer != -1) players.remove(removePlayer);
+		
 		sessionVector.remove(session);
+		
+		System.out.println("After closing: ");
+		
+		for (int i = 0; i<sessionVector.size(); i++) {
+			System.out.println("Session " + i + " is linked to player " + findPlayer(sessionVector.get(i)));
+		}
+		
+		
 	}
 	
 	@OnError

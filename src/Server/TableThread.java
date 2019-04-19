@@ -22,6 +22,7 @@ public class TableThread extends Thread{
 	
 	public TableThread(PlayerThread opt, int max) {
 		owner = opt;
+		owner.SetReady(true); //when owner creates table they are automatically ready
 		this.maxPlayers = max;
 		players.add(opt);
 		this.start();
@@ -48,21 +49,38 @@ public class TableThread extends Thread{
 		
 		System.out.println("TableThread: waiting");
 
-		System.out.println("TableThread: Table created, prompting owner");
+		System.out.println("TableThread: Table created, waiting for all players to be ready");
 		
-		Boolean oReady = owner.isReady();
+		waitForAllReady();
 		
-		while (!oReady) {
-			oReady = owner.isReady();
+		System.out.println("TableThread: All players are ready.");
+		
+		System.out.println("TableThread: Checking if owner wants to start.");
+		
+		Boolean ownerStart = owner.getStart();
+		
+		int amountOfPlayers = players.size();
+		
+		while (!ownerStart) {
+			//if a new player joins before owner starts go back to waiting for everyone to be ready
+			if (players.size() > amountOfPlayers) {
+				System.out.println("TableThread: New player has joined, waiting for all ready.");
+				waitForAllReady();
+				System.out.println("TableThread: Everybody ready, waiting for owner.");
+				amountOfPlayers = players.size();
+			}
+			
+			ownerStart = owner.getStart();
+			
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 		
-		System.out.println("TableThread: Table is ready.");
+		
+		System.out.println("TableThread: Table has started.");
 			
 //		for (int i = 0; i<players.size(); i++) {
 //			
@@ -91,8 +109,36 @@ public class TableThread extends Thread{
 //			this.broadcast(message, players.elementAt(i));
 //		}
 		
-		owner.SetReady(false);
+		System.out.println("TableThread: Round over, resetting.");
 		
+		setNotReady();
+		owner.SetStart(false);
+		
+	}
+	
+	private Boolean allReady() {
+		for (PlayerThread pt : players) {
+			if (!pt.isReady()) return false;
+		}
+		return true;
+	}
+	
+	private void waitForAllReady() {
+		Boolean allReady = allReady();
+		while (!allReady) {
+			allReady = allReady();
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	private void setNotReady() {
+		for (PlayerThread pt : players) {
+			if (pt != owner) pt.SetReady(false);
+		}
 	}
 	
 	public void broadcast(String message, PlayerThread currPT) {

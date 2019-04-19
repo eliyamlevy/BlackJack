@@ -7,6 +7,8 @@ public class PlayerThread extends Thread{
 	public int sessionIndex;
 	private TableThread table;
 	private Boolean ready = false;
+	//variable to represent when owner decides to start the table
+	private Boolean ownerStart = false;
 	public String username;
 	private String action = null;
 	private Lock lock;
@@ -30,6 +32,21 @@ public class PlayerThread extends Thread{
 		else {
 			System.out.println("PlayerThread: Player " + username + " is not ready.");
 		}
+	}
+	
+	public void SetStart(Boolean r) {
+		ownerStart = r;
+		if (ownerStart) {
+			System.out.println("PlayerThread: Player " + username + " wants to start table.");
+		}
+		
+		else {
+			System.out.println("PlayerThread: Player " + username + " is no longer waiting to start.");
+		}
+	}
+	
+	public Boolean getStart() {
+		return ownerStart;
 	}
 	
 	public void setAction(String input) {
