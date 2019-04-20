@@ -303,7 +303,7 @@ public class ServerSocket {
 		System.out.println("Table got owner: " + t.owner.username);
 		Vector<PlayerThread> tablePlayers = t.getPlayers();
 		System.out.println("Table has this many players: " + tablePlayers.size());
-		PlayerThread currentPlayer = tablePlayers.elementAt(findPlayer(current));
+		PlayerThread currentPlayer = players.elementAt(findPlayer(current));
 		System.out.println("reached line 277 in broadcast");
 		for (PlayerThread pt : tablePlayers) {
 			if(!pt.equals(currentPlayer)) {
