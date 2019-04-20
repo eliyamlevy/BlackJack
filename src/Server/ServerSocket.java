@@ -52,10 +52,14 @@ public class ServerSocket {
 				players.get(findPlayer(session)).SetStart(true);
 			}
 			
-			
 			else if(command.equals("HIT")) {
 				players.get(findPlayer(session)).setAction(message);
 			}
+			
+			else if(command.equals("BET")) {
+				players.get(findPlayer(session)).setAction(message);
+			}
+			
 			else if(command.equals("STAY")) {
 				players.get(findPlayer(session)).setAction(message);
 			}
@@ -86,8 +90,18 @@ public class ServerSocket {
 					joinTable(pt, tableNum);
 					System.out.println("Adding player " + username + " to table " + tableNum);
 					broadcastToOthersAtTable("Player " + username + " has joined your table!", session);
-					broadcastToOthersAtTable("UPD|INTABLE|" + t.getPlayers().size(), session);
-					sendMessage(session, "UPD|INTABLE|" + t.getPlayers().size());
+					String forAll = "UPD|INTABLE|" + t.getPlayers().size();
+					String forClient = "UPD|INTABLE|" + + t.getPlayers().size();
+					
+					for (int i = 0; i<t.getPlayers().size(); i++) {
+						forAll = forAll + "|" + t.getPlayers().get(i).username;
+						forClient = forClient + "|" + t.getPlayers().get(i).username;
+					}
+					
+					System.out.println(	forClient);
+					
+					broadcastToOthersAtTable(forAll, session);
+					sendMessage(session, forClient);
 					System.out.println("Table joined!");
 					//update everyone else who is in that table, that someone else has joined
 				}
@@ -105,7 +119,7 @@ public class ServerSocket {
 				createTable(pt, maxNum);
 				//sendMessage to the owner, saying send ready or something if you're done
 				System.out.println("There are now " + tables.size() + " tables.");
-				sendMessage(session, "UPD|INTABLE|1");
+				sendMessage(session, "UPD|INTABLE|1|" + username);
 			}	
 			else if (command.equals("LIST")) {
 				//sendMessage to the owner, saying send ready or something if you're done

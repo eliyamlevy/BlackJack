@@ -25,6 +25,13 @@
 						if (info[1] === "INTABLE") {
 							document.getElementById("tableStatus").innerHTML = "In Table";
 							document.getElementById("playerCount").innerHTML = info[2];
+							document.getElementById("playerList").innerHTML = "";
+							var playerCount = info[2];
+							
+							for (i = 0; i<playerCount; i++) {
+								document.getElementById("playerList").innerHTML += i+1 + ": " + info[3+i] + "<br>";
+							}
+							
 						}
 					}
 					
@@ -56,7 +63,29 @@
 				return false;
 			}
 			
+			function ready() {
+				var message = document.commonInputs.username.value + "|ACT|READY";
+				socket.send(message);
+				return false;
+			}
 			
+			function start() {
+				var message = document.commonInputs.username.value + "|ACT|START";
+				socket.send(message);
+				return false;
+			}
+			
+			function hit() {
+				var message = document.commonInputs.username.value + "|ACT|HIT";
+				socket.send(message);
+				return false;
+			}
+			
+			function stay() {
+				var message = document.commonInputs.username.value + "|ACT|STAY";
+				socket.send(message);
+				return false;
+			}
 			                                                                                                                                                                                                                                                                                                                                                       
 		</script>                                                                                                                                                                         
 	</head>                                                                                                                                                                               
@@ -78,7 +107,22 @@
 			Username: <input type="text" name="username"> <br>                                                                                                                              
 			Index of Table: <input type="text" name="index"> <br>                                                                                                                                     
 			<input type="submit" name="submit" value="Join Table">                                                                                                                      
-		</form>                                                                                                                                                                                                                                                                                                                                       
+		</form> 
+		
+		<br>
+		<br>
+		
+		<form name="commonInputs">
+			In-round Inputs: <br>
+			Username: <input type="text" name="username"> <br> 
+			<input type="button" value="Ready" onclick="return ready();">
+			<input type="button" value="Start" onclick="return start();">
+			<input type="button" value="Hit" onclick="return hit();">
+			<input type="button" value="Stay" onclick="return stay();">
+		
+		</form>
+		
+		                                                                                                                                                                                                                                                                                                                                      
 		<br /> 
 		<div id="reconnect" style="display: none;">
 			<form name="reconnectForm" onsubmit="return connectToServer();">                                                                                                                                 
@@ -88,7 +132,9 @@
 		<div id="Status">
 		In Table or Not: <div id="tableStatus"> </div> 
 		<br>
-		Amount of Players in Table: <div id="playerCount"> </div> 
+		Amount of Players in Table: <div id="playerCount"> </div> <br>
+		
+		List of Players in Table: <div id="playerList"> </div> 
 		
 		</div>
 

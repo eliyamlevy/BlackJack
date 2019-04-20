@@ -5,15 +5,13 @@ import java.util.concurrent.locks.Lock;
 public class PlayerThread extends Thread{
 	
 	public int sessionIndex;
-	private TableThread table;
+//	private TableThread table;
 	private Boolean ready = false;
 	//variable to represent when owner decides to start the table
 	private Boolean ownerStart = false;
 	public String username;
+	private int balance;
 	private String action = null;
-	private Lock lock;
-	private Condition canPlay;
-	private boolean isFirst = false;
 	private boolean isTurn = false;
 	private String result = null;
 	
@@ -54,6 +52,19 @@ public class PlayerThread extends Thread{
 		System.out.println("PlayerThread: Player Action" + input);
 	}
 	
+	public String getAction() {
+		while(this.action == null) {
+			try {
+				Thread.sleep(50);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		String action = this.action;
+		this.action = null;
+		return action;
+	}
+	
 	public Boolean isReady() {
 		return ready;
 	}
@@ -62,12 +73,12 @@ public class PlayerThread extends Thread{
 		//TODO
 	}
 	
-	public void set(TableThread t, Lock newLock, Condition play, Boolean first) {
-		table = t;
-		lock = newLock;
-		canPlay = play;
-		isFirst = first;
-	}
+//	public void set(TableThread t, Lock newLock, Condition play, Boolean first) {
+//		table = t;
+////		lock = newLock;
+////		canPlay = play;
+////		isFirst = first;
+//	}
 	
 	@Override
 	public void run() {
@@ -87,9 +98,13 @@ public class PlayerThread extends Thread{
 		}
 	}
 	
-	public TableThread getTable() {
-		return table;
-	}
+//	public TableThread getTable() {
+//		return table;
+//	}
+//	
+//	public void setTable(TableThread t) {
+//		table = t;
+//	}
 	
 	public boolean isTurn() {
 		return this.isTurn;
@@ -101,6 +116,11 @@ public class PlayerThread extends Thread{
 	
 	public String getResult() {
 		while(this.result == null) {
+			try {
+				Thread.sleep(50);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 		String result = this.result;
 		this.result = null;
