@@ -3,6 +3,8 @@ package Server;
 import java.io.IOException;
 import java.util.Scanner;
 import java.util.Vector;
+import java.util.concurrent.TimeUnit;
+
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 
@@ -45,11 +47,56 @@ public class ServerSocket {
 			if (command.equals("READY")) {
 				//starts hand on table when owner ready
 				players.get(findPlayer(session)).SetReady(true);
+				
+				String tableStatus = null;
+				
+				TableThread t = getTable(session);
+				
+				if (t.getRoundStatus() == false) {
+					tableStatus = "WAITING";
+				}
+				
+				else tableStatus = "INROUND";
+				
+				String forClient = "UPD|INTABLE|" + tableStatus + "|" + t.getPlayers().size();
+				
+				for (int i = 0; i<t.getPlayers().size(); i++) {
+					forClient = forClient + "|" + t.getPlayers().get(i).username;
+				}
+				
+				sendMessage(session, forClient);	
+				
 			}
 			
 			else if (command.equals("START")) {
 				//starts hand on table when owner ready
 				players.get(findPlayer(session)).SetStart(true);
+				
+				String tableStatus = null;
+				
+				TableThread t = getTable(session);
+				
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				if (t.getRoundStatus() == false) {
+					tableStatus = "WAITING";
+				}
+				
+				else tableStatus = "INROUND";
+				
+				String forClient = "UPD|INTABLE|" + tableStatus + "|" + t.getPlayers().size();
+				
+				for (int i = 0; i<t.getPlayers().size(); i++) {
+					forClient = forClient + "|" + t.getPlayers().get(i).username;
+				}
+				
+				sendMessage(session, forClient);	
+				
 			}
 			
 			else if(command.equals("HIT")) {
@@ -72,7 +119,14 @@ public class ServerSocket {
 		else if (typeTag.equals("CMD")) {
 			String command = sc.next();
 			System.out.println("Command:" + command);
-			if (command.equals("JOINTABLE")) {
+			
+			
+			if (command.equals("LIST")) {
+				System.out.println("filtered correctly");
+				this.sendTableList(session);
+			}
+			
+			else if (command.equals("JOINTABLE")) {
 				int tableNum = Integer.parseInt(sc.next());
 				TableThread t;
 				//COME BACK
@@ -90,18 +144,28 @@ public class ServerSocket {
 					joinTable(pt, tableNum);
 					System.out.println("Adding player " + username + " to table " + tableNum);
 					broadcastToOthersAtTable("Player " + username + " has joined your table!", session);
-					String forAll = "UPD|INTABLE|" + t.getPlayers().size();
-					String forClient = "UPD|INTABLE|" + + t.getPlayers().size();
+					
+					String tableStatus = null;
+					
+					if (t.getRoundStatus() == false) {
+						tableStatus = "WAITING";
+					}
+					
+					else tableStatus = "INROUND";
+					
+					String forAll = "UPD|INTABLE|" + tableStatus + "|" + t.getPlayers().size();
+					String forClient = "UPD|INTABLE|" + tableStatus + "|" + t.getPlayers().size();
 					
 					for (int i = 0; i<t.getPlayers().size(); i++) {
 						forAll = forAll + "|" + t.getPlayers().get(i).username;
 						forClient = forClient + "|" + t.getPlayers().get(i).username;
 					}
 					
-					System.out.println(	forClient);
+					System.out.println(forClient);
 					
 					broadcastToOthersAtTable(forAll, session);
 					sendMessage(session, forClient);
+					sendTableListToAll();
 					System.out.println("Table joined!");
 					//update everyone else who is in that table, that someone else has joined
 				}
@@ -110,25 +174,42 @@ public class ServerSocket {
 					sendMessage(session, "The table you chose is full.");
 					return;
 				}
+				
 			}
+			
 			else if (command.equals("NEWTABLE")) {
+				System.out.println("REACHED here");
 				int maxNum = Integer.parseInt(sc.next());
 				PlayerThread pt = new PlayerThread(sessionVector.indexOf(session), username);
 				players.add(pt);
 				System.out.println("Table created! for " + findPlayer(session));
-				createTable(pt, maxNum);
+				TableThread t = createTable(pt, maxNum);
 				//sendMessage to the owner, saying send ready or something if you're done
 				System.out.println("There are now " + tables.size() + " tables.");
-				sendMessage(session, "UPD|INTABLE|1|" + username);
-			}	
-			else if (command.equals("LIST")) {
-				//sendMessage to the owner, saying send ready or something if you're done
-				System.out.println("Sending table list");
-				for (int i = 0; i < tables.size(); i++) {
-					String tList = "Table " + i + " has " + tables.get(i).GetOpenSpots() + "\n\t Owned by " + tables.get(i).owner.username;
-					sendMessage(session, tList);
+				
+				String tableStatus = null;
+				
+				if (t.getRoundStatus() == false) {
+					tableStatus = "WAITING";
 				}
-			}
+				
+				else tableStatus = "INROUND";
+								
+				String forAll = "UPD|INTABLE|" + tableStatus + "|" + t.getPlayers().size();
+				String forClient = "UPD|INTABLE|" + tableStatus + "|" + t.getPlayers().size();
+				
+				for (int i = 0; i<t.getPlayers().size(); i++) {
+					forAll = forAll + "|" + t.getPlayers().get(i).username;
+					forClient = forClient + "|" + t.getPlayers().get(i).username;
+				}
+				
+				System.out.println(forClient);
+				System.out.println("All: " + forAll);
+				
+				sendMessage(session, forClient);
+				sendTableListToAll();
+				
+			}	
 		}
 		
 		try {
@@ -146,7 +227,6 @@ public class ServerSocket {
 		
 		int playerIndex = findPlayer(s);
 		PlayerThread player = players.elementAt(playerIndex);
-		
 		for (TableThread t : tables) {
 			if (t.hasPlayer(player)) return t;
 		}
@@ -164,8 +244,10 @@ public class ServerSocket {
 		
 	}
 	
-	private void createTable(PlayerThread pt, int max) {
-		tables.add(new TableThread(pt, max));
+	private TableThread createTable(PlayerThread pt, int max) {
+		TableThread t = new TableThread(pt, max);
+		tables.add(t);
+		return t;
 	}
 	
 	private void joinTable(PlayerThread pt, int tableNum) {
@@ -185,13 +267,45 @@ public class ServerSocket {
 		return playerIndex;
 	}
 	
+	private void sendTableList(Session s) {
+		String list = "LIST|";
+		
+		list += tables.size();
+		
+		for (int i = 0; i<tables.size(); i++) {
+			list = list + "|" + i + "|" + tables.get(i).GetOpenSpots() + "|" + tables.get(i).owner.username;
+		}
+		
+		sendMessage(s, list);
+		
+	}
+	
+	private void sendTableListToAll() {
+		
+		String list = "LIST|";
+		//format: LIST|number of tables|table index|open spots|owner
+		
+		list += tables.size();
+		
+		for (int i = 0; i<tables.size(); i++) {
+			list = list + "|" + i + "|" + tables.get(i).GetOpenSpots() + "|" + tables.get(i).owner.username;
+		}
+		
+		for (Session s : sessionVector) {
+			sendMessage(s, list);
+		}
+		
+	}
+	
 	public void broadcastToOthersAtTable(String message, Session current) {
 		System.out.println("ServerSocket: Broadcasting message: " + message);
 		TableThread t = getTable(current);
-		Vector<PlayerThread> players = t.getPlayers();
-		PlayerThread currentPlayer = players.get(findPlayer(current));
-		
-		for (PlayerThread pt : players) {
+		System.out.println("Table got owner: " + t.owner.username);
+		Vector<PlayerThread> tablePlayers = t.getPlayers();
+		System.out.println("Table has this many players: " + tablePlayers.size());
+		PlayerThread currentPlayer = tablePlayers.elementAt(findPlayer(current));
+		System.out.println("reached line 277 in broadcast");
+		for (PlayerThread pt : tablePlayers) {
 			if(!pt.equals(currentPlayer)) {
 				int sessionIndex = pt.sessionIndex;
 				sendMessage(sessionVector.get(sessionIndex), message);

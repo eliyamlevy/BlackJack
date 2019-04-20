@@ -8,6 +8,12 @@ public class TableThread extends Thread{
 	public PlayerThread owner = null;
 	private Vector<PlayerThread> players = new Vector<PlayerThread>();
 	private int maxPlayers;
+	private Boolean inRound = false;
+	
+	public Boolean getRoundStatus() {
+		System.out.println("Getting round status: " + inRound);
+		return inRound;
+	}
 	
 	public Vector<PlayerThread> getPlayers() {
 		return players;
@@ -20,6 +26,7 @@ public class TableThread extends Thread{
 	public TableThread(PlayerThread opt, int max) {
 		owner = opt;
 		owner.SetReady(true); //when owner creates table they are automatically ready
+		inRound = false;
 		this.maxPlayers = max;
 		players.add(opt);
 		this.start();
@@ -48,13 +55,14 @@ public class TableThread extends Thread{
 			
 			System.out.println("TableThread: All players are ready.");
 			
-			System.out.println("TableThread: Checking if owner wants to start.");
+			System.out.println("TableThread: Checking if owner " + owner.username + " wants to start.");
 			
 			Boolean ownerStart = owner.getStart();
 			
 			int amountOfPlayers = players.size();
 			
 			while (!ownerStart) {
+				
 				//if a new player joins before owner starts go back to waiting for everyone to be ready
 				if (players.size() > amountOfPlayers) {
 					System.out.println("TableThread: New player has joined, waiting for all ready.");
@@ -66,14 +74,15 @@ public class TableThread extends Thread{
 				ownerStart = owner.getStart();
 				
 				try {
-					Thread.sleep(50);
+					Thread.sleep(10);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 			}
 			
-			
+			inRound = true;
 			System.out.println("TableThread: Table has started.");
+
 			
 			for (int i = 0; i<players.size(); i++) {
 				players.get(i).setTurn(true);
@@ -84,7 +93,7 @@ public class TableThread extends Thread{
 			}
 			
 			System.out.println("TableThread: Round over, resetting.");
-			
+			inRound = false;
 			setNotReady();
 			owner.SetStart(false);
 				
