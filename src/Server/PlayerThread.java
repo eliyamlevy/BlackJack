@@ -53,9 +53,10 @@ public class PlayerThread extends Thread{
 	public int getScore() {
 		return score;
 	}
+	
 	public int getBailout() {
-		return bailoutTokens;
-	}
+ 		return bailoutTokens;
+ 	}
 	
 	public void setBalance(int newBalance) {
 		balance = newBalance;
@@ -65,9 +66,10 @@ public class PlayerThread extends Thread{
 		bet = newBet;
 		return;
 	}
+	
 	public void increaseBailout() {
-		bailoutTokens++;
-	}
+ 		bailoutTokens++;
+ 	}
 	
 	
 	public Vector<Integer> getHand() {

@@ -87,7 +87,7 @@
 											console.log("i: " + i + " numCards:" + info[index] + " user: " + info[index - 3]);
 											document.getElementById("hand").innerHTML = "Your Hand: <br />";
 											for(j = 0; j < numCards; j++) {
-												document.getElementById("hand").innerHTML += info[++index];
+												document.getElementById("hand").innerHTML += info[++index] + " ";
 											}
 										}
 										else {
