@@ -48,23 +48,9 @@ public class ServerSocket {
 				//starts hand on table when owner ready
 				players.get(findPlayer(session)).SetReady(true);
 				
-				String tableStatus = null;
-				
 				TableThread t = getTable(session);
 				
-				if (t.getRoundStatus() == false) {
-					tableStatus = "WAITING";
-				}
-				
-				else tableStatus = "INROUND";
-				
-				String forClient = "UPD|INTABLE|" + tableStatus + "|" + t.getPlayers().size();
-				
-				for (int i = 0; i<t.getPlayers().size(); i++) {
-					forClient = forClient + "|" + t.getPlayers().get(i).username;
-				}
-				
-				sendMessage(session, forClient);	
+				sendMessage(session, this.getInGameUpdate(t));	
 				
 			}
 			
@@ -72,70 +58,19 @@ public class ServerSocket {
 				//starts hand on table when owner ready
 				players.get(findPlayer(session)).SetStart(true);
 				
-				String tableStatus = null;
-				
 				TableThread t = getTable(session);
 				
-				try {
-					Thread.sleep(10);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				
-				if (t.getRoundStatus() == false) {
-					tableStatus = "WAITING"; //print ready/waiting state for everyone!
-				}
-				
-				else tableStatus = "INROUND";
-				
-				String forClient = "UPD|INTABLE|" + tableStatus + "|" + t.getPlayers().size();
-				
-				for (int i = 0; i<t.getPlayers().size(); i++) {
-					forClient = forClient + "|" + t.getPlayers().get(i).username;
-				}
-				
-				System.out.println(forClient);
-				sendMessage(session, forClient);	
+				System.out.println(this.getInGameUpdate(t));
+				sendMessage(session, this.getInGameUpdate(t));
 				
 			}
 			
 			else if(command.equals("HIT")) {
 				players.get(findPlayer(session)).setAction(message);
 				
-				//create game state string
-				String tableStatus = null;
-				
 				TableThread t = getTable(session);
-				
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
-				if (t.getRoundStatus() == false) {
-					tableStatus = "WAITING";
-				}
-				
-				else tableStatus = "INROUND";
-							
-				String forClient = "UPD|INTABLE|" + tableStatus + "|" + t.getPlayers().size();
-				
-				for (int i = 0; i<t.getPlayers().size(); i++) {
-					
-					forClient = forClient + "|" + t.getPlayers().get(i).username;
-					
-					if (t.getPlayers().get(i).isTurn()) {
-						forClient = forClient + "|" + "TURN";
-					}
-					
-					else {
-						forClient = forClient + "|" + "NOTTURN";
-					}		
-				}
 								
-				this.sendMessage(session, forClient);
+				this.sendMessage(session, this.getInGameUpdate(t));
 				
 			}
 			
@@ -144,7 +79,8 @@ public class ServerSocket {
 				String result = players.get(findPlayer(session)).getResult();
 				
 				if (result == "SUCCESS") {
-					//update all
+					TableThread t = this.getTable(session);
+					this.sendMessage(session, this.getInGameUpdate(t));
 				}
 				
 				else {
@@ -157,8 +93,7 @@ public class ServerSocket {
 				players.get(findPlayer(session)).setAction(message);
 			}
 			else if(command.equals("LEAVE")) {
-				players.get(findPlayer(session)).setAction(message);
-				
+				players.get(findPlayer(session)).setAction(message);	
 			}
 		}
 		//Outside of game logic
@@ -166,16 +101,13 @@ public class ServerSocket {
 			String command = sc.next();
 			System.out.println("Command:" + command);
 			
-			
 			if (command.equals("LIST")) {
-				System.out.println("filtered correctly");
 				this.sendTableList(session);
 			}
 			
 			else if (command.equals("JOINTABLE")) {
 				int tableNum = Integer.parseInt(sc.next());
 				TableThread t;
-				//COME BACK
 				try {
 					t = tables.get(tableNum);
 				} catch (Exception e) {
@@ -191,25 +123,9 @@ public class ServerSocket {
 					System.out.println("Adding player " + username + " to table " + tableNum);
 					broadcastToOthersAtTable("Player " + username + " has joined your table!", session);
 					
-					String tableStatus = null;
+					String forClient = this.getInGameUpdate(t);
 					
-					if (t.getRoundStatus() == false) {
-						tableStatus = "WAITING";
-					}
-					
-					else tableStatus = "INROUND";
-					
-					String forAll = "UPD|INTABLE|" + tableStatus + "|" + t.getPlayers().size();
-					String forClient = "UPD|INTABLE|" + tableStatus + "|" + t.getPlayers().size();
-					
-					for (int i = 0; i<t.getPlayers().size(); i++) {
-						forAll = forAll + "|" + t.getPlayers().get(i).username;
-						forClient = forClient + "|" + t.getPlayers().get(i).username;
-					}
-					
-					System.out.println(forClient);
-					
-					broadcastToOthersAtTable(forAll, session);
+					broadcastToOthersAtTable(forClient, session);
 					sendMessage(session, forClient);
 					sendTableListToAll();
 					System.out.println("Table joined!");
@@ -233,24 +149,7 @@ public class ServerSocket {
 				//sendMessage to the owner, saying send ready or something if you're done
 				System.out.println("There are now " + tables.size() + " tables.");
 				
-				String tableStatus = null;
-				
-				if (t.getRoundStatus() == false) {
-					tableStatus = "WAITING";
-				}
-				
-				else tableStatus = "INROUND";
-								
-				String forAll = "UPD|INTABLE|" + tableStatus + "|" + t.getPlayers().size();
-				String forClient = "UPD|INTABLE|" + tableStatus + "|" + t.getPlayers().size();
-				
-				for (int i = 0; i<t.getPlayers().size(); i++) {
-					forAll = forAll + "|" + t.getPlayers().get(i).username;
-					forClient = forClient + "|" + t.getPlayers().get(i).username;
-				}
-				
-				System.out.println(forClient);
-				System.out.println("All: " + forAll);
+				String forClient = this.getInGameUpdate(t);
 				
 				sendMessage(session, forClient);
 				sendTableListToAll();
@@ -407,6 +306,13 @@ public class ServerSocket {
 	
 	private String getInGameUpdate(TableThread t) {
 		
+		try {
+			Thread.sleep(50);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		String tableStatus = null;
 		
 		if (t.getRoundStatus() == false) {
@@ -445,11 +351,18 @@ public class ServerSocket {
 				
 				else forClient+="|NOTTURN";
 				
-			}
-			
-			
+				forClient+= "|" + t.getPlayers().get(i).getScore() + "|" + t.getPlayers().get(i).getHand().size();
+				
+				for (int j = 0; j<t.getPlayers().get(i).getHand().size(); j++) {
+					forClient += "|" + t.getPlayers().get(i).getHand().get(j); //add if they bust/got blackjack
+				}
+					
+			}	
 			
 		}
+		
+		System.out.println("Game Update String: " + forClient);
+		return forClient;
 		
 		
 	}
