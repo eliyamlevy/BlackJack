@@ -1,5 +1,15 @@
 @charset "UTF-8";
 
+@font-face{
+ font-family: 'strong';
+ src: url('Universal_Serif.ttf') format('truetype');
+}
+
+@font-face{
+ font-family: 'regular';
+ src: url('unispace_rg.ttf') format('truetype');
+}
+
 body{
 	background-corlor: black;
 	color: white;
@@ -11,14 +21,15 @@ body{
 	background-repeat: no repeat;
 	background-size: cover;
 	filter: blur(4px);
-	height: 101vh;
-	width: 101vw;
-	left: -0.5vw;
-	top: -0.5vh;
+	height: 103vh;
+	width: 103vw;
+	left: -1vw;
+	top: -1vh;
 	z-index: 50;
 }
 
 h1 {
+	font-family: strong;
 	display: block;
 	position: relative;
 	z-index: 100;
@@ -38,7 +49,6 @@ h1 {
 }
 
 #userInfo {
-	background-color: #85ff008a;
 	width: 15vw;
 	height: 30vh;
 	left: 1vw;
@@ -48,24 +58,84 @@ h1 {
 	border-radius: 1vw;
 }
 
+#blockImage {
+	width: 15vw;
+	height: 35vh;
+	position:fixed;
+	background-image: url("infoBlock.jpg"); 
+	background-repeat: no repeat;
+	background-size: cover;
+	border-radius: 5px;
+}
+
 #username {
 	display: block;
 	text-align: center;
+	color: white;
+	z-index: 100;
+	position: relative;
+	top: 60%;
+	font-family: regular;
+}
+
+#balance {
+	display: block;
+	text-align: center;
+	color: white;
+	z-index: 100;
+	position: relative;
+	top: 80%;
+	font-family: regular;
+}
+
+#avatarBlock {
+	position: fixed;
+	top: 20%;
+	left: 5%;
 }
 
 #avatar {
-	position: fixed;
-	top: 16%;
-	left: 4.5%;
+	width: 15vh;
+	height: 15vh;
+	border: 1px solid #ddd;
+  	border-radius: 4px;
+  	padding: 1px;
+}
+
+#newTable {
+	margin-left: 1%;
+	background-color: #32b600;
+	border-color: #32b600;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 6px;
+	color: #fff;
+	width: 80%;
+    position: relative;
+    left: 0%;
+    font-family: 'regular';
+}
+
+#newTable:hover {
+  background: gold;
+  border-color: gold;
 }
 
 #moreInfo {
-	top: 33vh;
-	left: 9vw;
-	position: fixed;
-	background-color: white;
-	border-radius: 1vh;
-	border-color: white;
-	padding: 1vh;
+	margin-left: 1%;
+	background-color: gray;
+	border-color: gray;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 6px;
+	color: black;
+	width: 80%;
+    position: relative;
+    font-family: 'regular';
+}
+
+#moreInfo:hover {
+  background: white;
+  border-color: white;
 }
 

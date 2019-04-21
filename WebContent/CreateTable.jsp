@@ -6,8 +6,12 @@
 		<meta charset="UTF-8">
 		<title>Create New Table</title>
 		<link rel="stylesheet" type="text/css" href="Assets/createtable.css" />
+		<link rel="shortcut icon" href="Assets/favicon.ico" type="image/x-icon">
 	</head>
 	<body>
+		<div id="navigator">
+			<a id="blackjack" href="${pageContext.request.contextPath}/HomePage.jsp">B L A C K J A C K</a>
+		</div>
 		<div id="background">
 		</div>
 		<div id="container">

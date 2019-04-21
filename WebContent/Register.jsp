@@ -6,30 +6,21 @@
 		<meta charset="UTF-8">
 		<title>Register</title>
 		<link rel="stylesheet" type="text/css" href="Assets/register.css" />
+		<link rel="shortcut icon" href="Assets/favicon.ico" type="image/x-icon">
 
 		<script>
-
 			function validate() {
-				
 				var xhttp = new XMLHttpRequest();
-
 				xhttp.open("POST", "AddRegister?fullname=" + document.registerForm.fullname.value + 
 					"&email=" + document.registerForm.email.value + "&username=" + document.registerForm.username.value + "&password=" + document.registerForm.password.value + "&cpassword=" + document.registerForm.cpassword.value, false);
-		
 				xhttp.send();
-		
 				if (xhttp.responseText.trim().length > 0) {
 					document.getElementById("errorMessage").innerHTML = xhttp.responseText;
 					return false;
 				}
-		
 				alert('Account successfully created');
 				return true;
-			
 			}
-
-
-
 		</script>
 
 
@@ -37,6 +28,9 @@
 	</head>
 
 	<body>
+		<div id="navigator">
+			<a id="blackjack" href="${pageContext.request.contextPath}/WelcomePage.jsp">B L A C K J A C K</a>
+		</div>
 		<div id="background">
 		</div>
 		<div id="container">
@@ -49,8 +43,7 @@
 				Confirm Password <br /><input type="password" name="cpassword" id="cpassword"><br />
 				<span id="errorMessage"></span><br />
 				<span id="balanceInfo">Starting balance: $500</span><br />
-				<div id="avatarBlock">Avatar Block</div>
-				<input type="submit" value="Register">
+				<input type="submit" value="Register" id="submit">
 			</form>
 		</div>
 	</body>
