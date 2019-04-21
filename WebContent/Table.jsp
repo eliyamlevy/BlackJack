@@ -3,9 +3,27 @@
 <html>                                                                                                                                                                                    
 	<head>                                                                                                                                                                                
 		<meta charset="UTF-8">                                                                                                                                                            
-		<title>Chat Room</title>                                                                                                                                                          
+		<title>Table</title>    
+		<style>
+			#actualPage div {
+				display: block;
+				position: relative;
+				padding: 20px;
+				border-style: solid;
+  				border-width: 2px;
+  				margin: 10px;
+			}
+		</style>                                                                                                                                                      
 		<script>                                                                                                                                                                          
 			var socket;  
+			
+			var username;
+			
+			function setUsername() {
+				username = document.getUsernameForm.username.value;
+				document.getElementById("usernameDiv").innerHTML = "Hello " + username + "!";
+				return false;
+			}
 			
 			function list() {
 				var message = "a|CMD|LIST";
@@ -59,6 +77,7 @@
 							document.getElementById("tables").innerHTML += "Table " + info[++index] + " has " + info[++index] + " open spots, and is owned by " +  info[++index] + "<br>";
 						}
 						
+						
 					}
 					
 					document.getElementById("mychat").innerHTML += event.data + "<br>";
@@ -77,101 +96,134 @@
 			}
 			
 			function createTable() {
-				var message = document.createTableForm.username.value + "|CMD|NEWTABLE|" + document.createTableForm.size.value;
+				var message = username + "|CMD|NEWTABLE|" + document.createTableForm.size.value;
 				socket.send(message);
 				return false;
 			}
 			
 			function joinTable() {
-				var message = document.joinTableForm.username.value + "|CMD|JOINTABLE|" + document.joinTableForm.index.value;
+				var message = username + "|CMD|JOINTABLE|" + document.joinTableForm.index.value;
 				socket.send(message);
 				return false;
 			}
 			
 			function ready() {
-				var message = document.commonInputs.username.value + "|ACT|READY";
+				var message = username + "|ACT|READY";
 				socket.send(message);
 				return false;
 			}
 			
 			function start() {
-				var message = document.commonInputs.username.value + "|ACT|START";
+				var message = username + "|ACT|START";
 				socket.send(message);
 				return false;
 			}
 			
 			function hit() {
-				var message = document.commonInputs.username.value + "|ACT|HIT";
+				var message = username + "|ACT|HIT";
 				socket.send(message);
 				return false;
 			}
 			
 			function stay() {
-				var message = document.commonInputs.username.value + "|ACT|STAY";
+				var message = username + "|ACT|STAY";
 				socket.send(message);
+				return false;
+			}
+			
+			function leave() {
+				alert("Sorry you can't do that yet");
 				return false;
 			}
 			                                                                                                                                                                                                                                                                                                                                                       
 		</script>                                                                                                                                                                         
 	</head>                                                                                                                                                                               
-	<body onload="connectToServer();">                                                                                                                                           
+	<body onload="connectToServer();"> 
+		<div id="actualPage"> 
+			<div id="usernameDiv">
+				<form name="getUsernameForm" onsubmit="return setUsername();"> 
+					Username: <input type="text" name="username">                                                                                                                     
+					<input type="submit" name="submit" value="Login">                                                                                                                   
+				</form> 
+			</div>
+			
+			<div id="tableList">
+				Active Tables: <div id="tables"> </div>
+				
+				<br />
+				
+				<form name="joinTableForm" onsubmit="return joinTable();"> 
+				Join Table: <br>                                                                                                                              
+				Index of Table: <input type="text" name="index"> <br>                                                                                                                                     
+				<input type="submit" name="submit" value="Join Table">                                                                                                                      
+			</form> 
+			</div> 
+			
+			<div id="createTable">
+				<form name="createTableForm" onsubmit="return createTable();"> 
+					Create Table: <br>
+					Size: <input type="text" name="size"> <br>                                                                                                                                     
+					<input type="submit" name="submit" value="Create Table">                                                                                                                      
+				</form> 
+			</div>
+			
+			<div id="openTable">
+				In Table:
+				<div id="yourTurn">
+					<form name="yourTurnForm">
+						Your Turn, Please Select a Move: <br>
+						<input type="button" value="Hit" onclick="return hit();">
+						<input type="button" value="Stay" onclick="return stay();">
+					</form>
+				</div>
+				<div id="notTurn">
+					<!-- Add no turn stuff -->
+					Not Turn Stuff
+				</div>
+				<div id="tableWait">
+					<form name="tableWaitForm">
+						Table Wait State Form: <br>
+						<input type="button" value="Ready" onclick="return ready();">
+						<input type="button" value="Start" onclick="return start();">
+						<input type="button" value="Leave" onclick="return leave();">
+					</form>
+				</div>
+			</div>         
+		</div>
+		<br /><br /><br /><br /><br />
+		
+		<!-- This stuff is the old stuff -->         
+		                                                                                                                       
 		<form name="chatForm" onsubmit="return sendMessage();">                                                                                                                             
-			Message: <input type="text" name="message"> <br>                                                                                                                                     
+			Console Input: <input type="text" name="message"> <br>                                                                                                                                     
 			<input type="submit" name="submit" value="Send Message">                                                                                                                      
-		</form>                                                                                                                                                                                                                                                                                                                                       
-		<br />   
-		<form name="createTableForm" onsubmit="return createTable();"> 
-			Create Table: <br>
-			Username: <input type="text" name="username"> <br>                                                                                                                              
-			Size: <input type="text" name="size"> <br>                                                                                                                                     
-			<input type="submit" name="submit" value="Create Table">                                                                                                                      
-		</form>                                                                                                                                                                                                                                                                                                                                       
+		</form>    
+		                                                                                                                                                                                                                                                                                                                                   
+		                                                                                                                                                                                                                                                                                                                                  
 		<br />  
-		<form name="joinTableForm" onsubmit="return joinTable();"> 
-			Join Table: <br>
-			Username: <input type="text" name="username"> <br>                                                                                                                              
-			Index of Table: <input type="text" name="index"> <br>                                                                                                                                     
-			<input type="submit" name="submit" value="Join Table">                                                                                                                      
-		</form> 
+		
+		
 		
 		<br>
-		<br>
 		
-		<form name="commonInputs">
-			In-round Inputs: <br>
-			Username: <input type="text" name="username"> <br> 
-			<input type="button" value="Ready" onclick="return ready();">
-			<input type="button" value="Start" onclick="return start();">
-			<input type="button" value="Hit" onclick="return hit();">
-			<input type="button" value="Stay" onclick="return stay();">
-			<input type="button" value="List" onclick="return list();">
-		
-		</form>
-		
-		                                                                                                                                                                                                                                                                                                                                      
-		<br /> 
 		<div id="reconnect" style="display: none;">
 			<form name="reconnectForm" onsubmit="return connectToServer();">                                                                                                                                 
 				<input type="submit" name="submit" value="Reconnect to server?">                                                                                                                      
 			</form> 
 		</div> 
+		
 		<div id="Status">
-		Active Tables: <div id="tables"> </div> 
-		<br>
-		In Table or Not: <div id="tableStatus"> </div> 
-		<br>
-		In Round or Not: <div id="roundStatus"> </div> 
-		<br>
-		Amount of Players in Table: <div id="playerCount"> </div> <br>
-		
-		List of Players in Table: <div id="playerList"> </div> 
-		
+			In Table or Not: <div id="tableStatus"> </div> 
+			<br>
+			In Round or Not: <div id="roundStatus"> </div> 
+			<br>
+			Amount of Players in Table: <div id="playerCount"> </div> <br>
+			
+			List of Players in Table: <div id="playerList"> </div> 
 		</div>
-
-		<br>
-		                                                                                                                                                                       
+		
 		<div id="mychat">
-		Messages: <br>
+		Console: <br>
 		</div>                                                                                                                                                           
 	</body>                                                                                                                                                                               
 </html>                                                                                                                                                                                   
