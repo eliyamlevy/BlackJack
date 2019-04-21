@@ -9,6 +9,7 @@
 	String email = "";
 	int balance = -1;
 	int tokens = -1;
+	boolean canReturnToken = false;
 	if(login){
 		username = (String)session.getAttribute("user");
 		Connection conn = null;
@@ -26,6 +27,9 @@
 				email = rs.getString("email");
 				balance = rs.getInt("balance");
 				tokens = rs.getInt("bailoutTokens");
+				if(tokens>0){
+					canReturnToken = true;
+				}
 			}
 		} catch (ClassNotFoundException cnfe) {
 			System.out.println("cnfe: "+cnfe.getMessage());
@@ -66,7 +70,17 @@
 				</tr>
 				<tr>
 					<td>Tokens <br />holding</td>
-					<td><%= tokens %></td>
+					<td><%= tokens %>
+					<%
+						if(canReturnToken){
+					%>
+						<form id="tokenForm" method="POST" action="ReturnToken">
+							<button id="returnToken" onclick="submit">Return Token</button>
+						</form>
+					<%
+						}
+					%>
+					</td>
 				</tr>
 				<tr>
 					<td>Ranking</td>
