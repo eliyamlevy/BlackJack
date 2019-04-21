@@ -54,25 +54,9 @@
 						if (info[1] === "INTABLE") {
 							if (info[2] === "WAITING") {
 								state = 2;
-								document.getElementById("playerList").innerHTML = "";
-								var playerCount = info[3];
 								
-								for (i = 0; playerCount; i++) {
-									var playerLine = i+1 + ": ";
-									if(info[5+2*i] === "READY") {
-										playerLine += "<b><i>" + info[4+2*i] + "</i></b> <br />";
-									}
-									document.getElementById("playerList").innerHTML += playerLine;
-								}
 							}
 							else {
-								document.getElementById("playerList").innerHTML = "";
-								var playerCount = info[3];
-								
-								for (i = 0; playerCount; i++) {
-									var playerLine = i+1 + ": " + info[4+i] + " <br />";
-									document.getElementById("playerList").innerHTML += playerLine;
-								}
 								state = 3;
 							}
 						}
