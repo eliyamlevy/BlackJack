@@ -70,6 +70,41 @@
 									document.getElementById("playerList").innerHTML += playerLine;
 								}
 							}
+							else if(info[2] === "INROUND") {
+								//Clear PlayerList
+								document.getElementById("playerList").innerHTML = "";
+								//Get num players
+								var playerCount = info[3];
+								var index = 4;
+								for (i = 0; i < playerCount; i++) {
+									var playerLine = (i+1) + ": ";
+									if(info[++index] === "TURN") {
+										playerLine += "<b><i>" + info[index - 1] + "</i></b>: Score:" + info[++index] + " <br />";
+										if(info[index - 2] === username) {
+											state = 4;
+											var numCards = info[++index];
+											document.getElementById("hand").innerHTML = "Your Hand: <br />";
+											for(i = 0; i < numCards; i++) {
+												document.getElementById("hand").innerHTML += info[++index];
+											}
+										}
+										else {
+											state = 3;
+											var numCards = info[++index];
+											index += numcards;
+										}
+									}
+									else {
+										playerLine += info[index - 1] + ": Score:" + info[++index] + " <br />";
+										state = 3;
+										var numCards = info[++index];
+										index += numcards;
+									}
+									document.getElementById("playerList").innerHTML += playerLine;
+									index++;
+								}
+								
+							}
 							else {
 								document.getElementById("playerList").innerHTML = "";
 								var playerCount = info[3];
@@ -78,7 +113,7 @@
 									var playerLine = i+1 + ": " + info[4+i] + " <br />";
 									document.getElementById("playerList").innerHTML += playerLine;
 								}
-								state = 3;
+								
 							}
 						}
 					}
@@ -182,8 +217,13 @@
 					document.getElementById("tableWait").style.display = "block";
 				}
 				else if(state === 3) {
-					document.getElementById("yourTurn").style.display = "block";
+					document.getElementById("yourTurn").style.display = "none";
 					document.getElementById("notTurn").style.display = "block";
+					document.getElementById("tableWait").style.display = "none";
+				}
+				else if(state === 4) {
+					document.getElementById("yourTurn").style.display = "block";
+					document.getElementById("notTurn").style.display = "none";
 					document.getElementById("tableWait").style.display = "none";
 				}
 			}
@@ -247,6 +287,7 @@
 			<div id="openTable">
 				In Table:
 				<div id="yourTurn">
+					<div id="hand"></div>
 					<form name="yourTurnForm">
 						Your Turn, Please Select a Move: <br>
 						<input type="button" value="Hit" onclick="return hit();">
