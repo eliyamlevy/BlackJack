@@ -78,6 +78,7 @@
 								var index = 4;
 								for (i = 0; i < playerCount; i++) {
 									var playerLine = (i+1) + ": ";
+									console.log("info:" + info[index] + " " + info[index+1]);
 									if(info[++index] === "TURN") {
 										playerLine += "<b><i>" + info[index - 1] + "</i></b>: Score:" + info[++index] + " <br />";
 										if(info[index - 2] === username) {
@@ -89,7 +90,6 @@
 											}
 										}
 										else {
-											state = 3;
 											var numCards = info[++index];
 											index += parseInt(numCards);
 										}
@@ -97,7 +97,9 @@
 									else {
 										
 										playerLine += info[index - 1] + ": Score:" + info[++index] + " <br />";
-										state = 3;
+										if(info[index - 1] === username) {
+											state = 3;
+										}
 										console.log("in else before numcars " + index + " " + info[index]);
 										var numCards = info[++index];
 										console.log("in else after numcars " + index + " " + numCards);
