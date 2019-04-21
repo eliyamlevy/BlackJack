@@ -91,17 +91,22 @@
 										else {
 											state = 3;
 											var numCards = info[++index];
-											index += numCards;
+											index += parseInt(numCards);
 										}
 									}
 									else {
+										
 										playerLine += info[index - 1] + ": Score:" + info[++index] + " <br />";
 										state = 3;
+										console.log("in else before numcars " + index + " " + info[index]);
 										var numCards = info[++index];
-										index += numCards;
+										console.log("in else after numcars " + index + " " + numCards);
+										index += parseInt(numCards);
+										console.log("in else after numcars " + index  + " " + numCards);
 									}
 									document.getElementById("playerList").innerHTML += playerLine;
-									index++;
+									++index;
+									console.log(index);
 								}
 								
 							}
