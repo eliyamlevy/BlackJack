@@ -57,12 +57,12 @@
 							
 							if (info[2] === "WAITING") {
 								document.getElementById("roundStatus").innerHTML = "Not in Round";
-								state = 1;
+								state = 2;
 							}
 							
 							else { 
 								document.getElementById("roundStatus").innerHTML = "In Round";
-								state = 2;
+								state = 3;
 							}
 							
 							document.getElementById("playerCount").innerHTML = info[3];
@@ -151,7 +151,7 @@
 			}
 			
 			function showStateDiv() {
-				alert("State: " + state);
+				//alert("State: " + state);
 				if(state === 0) {
 					document.getElementById("tableStuff").style.display = "none";
 					document.getElementById("openTable").style.display = "none";
@@ -163,6 +163,14 @@
 				else if(state === 2) {
 					document.getElementById("tableStuff").style.display = "none";
 					document.getElementById("openTable").style.display = "block";
+					document.getElementById("yourTurn").style.display = "none";
+					document.getElementById("notTurn").style.display = "none";
+					document.getElementById("tableWait").style.display = "block";
+				}
+				else if(state === 3) {
+					document.getElementById("yourTurn").style.display = "block";
+					document.getElementById("notTurn").style.display = "block";
+					document.getElementById("tableWait").style.display = "none";
 				}
 			}
 			
