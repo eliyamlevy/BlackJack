@@ -26,7 +26,7 @@ public class PlayerThread extends Thread{
 		this.sessionIndex = index;
 		this.hand = new Vector<Integer>();
 		this.table = t;
-		balance = 20;
+		balance = 100;
 		score = 0;
 		this.start();
 	}
@@ -38,6 +38,14 @@ public class PlayerThread extends Thread{
 		return bet;
 	}
 	
+	public void setScore(int newScore) {
+		score = newScore;
+	}
+	
+	public void clearHand() {
+		hand.clear();
+	}
+	
 	public boolean getBlackjack() {
 		return blackjack;
 	}
@@ -45,9 +53,10 @@ public class PlayerThread extends Thread{
 	public int getScore() {
 		return score;
 	}
+	
 	public int getBailout() {
-		return bailoutTokens;
-	}
+ 		return bailoutTokens;
+ 	}
 	
 	public void setBalance(int newBalance) {
 		balance = newBalance;
@@ -57,9 +66,10 @@ public class PlayerThread extends Thread{
 		bet = newBet;
 		return;
 	}
+	
 	public void increaseBailout() {
-		bailoutTokens++;
-	}
+ 		bailoutTokens++;
+ 	}
 	
 	
 	public Vector<Integer> getHand() {
@@ -119,6 +129,7 @@ public class PlayerThread extends Thread{
 			while (true) {
 				if(this.isTurn()) {
 					score = 0;
+					result = null;
 					
 					while (action == null) {
 						Thread.sleep(10);
@@ -136,16 +147,16 @@ public class PlayerThread extends Thread{
 					}
 					
 					bet = Integer.parseInt(details[3]);
-					setBalance(balance-bet);
 					
 					//action string is username|act|bet|amount
 
 						//Instead of 0 it should be table.minbet or something
-					int minbet = 10;
+					int minbet = 0;
 					while(bet<minbet || bet>balance)
 					{
 							//bet = GET BET AMOUNT
 						System.out.println("Incorrect bet.");
+						System.out.println("Balance is " + balance);
 							
 						if(bet<minbet)
 						{
@@ -170,6 +181,9 @@ public class PlayerThread extends Thread{
 					}
 					
 					System.out.println("BET done, amount = " + bet);
+					result = "SUCCESS";
+					action = null;
+					setBalance(balance-bet);
 					
 					//DEAL OUT CARDS TO PLAYER
 					hand.add(table.dealCard());
@@ -192,10 +206,16 @@ public class PlayerThread extends Thread{
 					boolean hitstayloop = true;
 					while(hitstayloop && !blackjack)
 					{
+						System.out.println("In hit or stay loop!");
+						while (action == null) {
+							Thread.sleep(10);
+						}
+						
+						details = action.split("\\|");
 						
 						if(details[2].equals("HIT"))
 						{
-							//hand.add(table.dealCard());
+							hand.add(table.dealCard());
 							if(BlackJackHelpers.GetIdealScore(hand)>21)
 							{
 								System.out.println("Player busted. End Turn.");
@@ -207,26 +227,24 @@ public class PlayerThread extends Thread{
 							else
 							{
 								System.out.println("Added card. Player still able to play.");
+								result = "SUCCESS";
 								//SEND UPDATE TO TABLE FOR BLACKJACK/HAND/SCORE
 								//Blackjack = false / hand = current hand / score = BlackJackHelpers.GetIdealScore(hand)
 							}
+							
+							action = null;
+							
+							
 						}
 						else if(details[2].equals("STAY"))
 						{
 							System.out.println("Player stayed. End Turn.");
 							hitstayloop = false;
 							this.isTurn = false;
+							action = null;
 							//SEND UPDATE TO TABLE FOR BLACKJACK/HAND/SCORE
 							//Blackjack = false / hand = current hand / score = BlackJackHelpers.GetIdealScore(hand)
 						}
-						
-						action = null;
-						
-						while (action == null) {
-							Thread.sleep(10);
-						}
-						
-						details = action.split("\\|");
 						
 					}
 					//Player turn is over
@@ -235,6 +253,9 @@ public class PlayerThread extends Thread{
 					score = BlackJackHelpers.GetIdealScore(hand);
 					BlackJackHelpers.PrintHand(hand);
 					result = "SUCCESS";
+					action = null;
+					bet = -1;
+					details = null;
 					this.setTurn(false);
 					
 				}
