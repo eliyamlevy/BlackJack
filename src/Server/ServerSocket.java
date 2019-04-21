@@ -27,6 +27,8 @@ public class ServerSocket {
 		sc = new Scanner(message);
 		sc.useDelimiter("\\|");
 		String username = sc.next();
+		
+		
 		System.out.println("Username:" + username);
 		String typeTag = sc.next();
 		System.out.println("Type:" + typeTag);
@@ -56,9 +58,17 @@ public class ServerSocket {
 			
 			else if (command.equals("START")) {
 				//starts hand on table when owner ready
+				TableThread t = getTable(session);
+				
+				if (!t.allReady()) {
+					sendMessage(session, "ERR|WAITING|INVSTART");
+					return;
+				}
+				
+				
 				players.get(findPlayer(session)).SetStart(true);
 				
-				TableThread t = getTable(session);
+
 				
 				sendMessage(session, this.getInGameUpdate(t));
 				this.broadcastToOthersAtTable(this.getInGameUpdate(t), session);
@@ -95,6 +105,15 @@ public class ServerSocket {
 				players.get(findPlayer(session)).setAction(message);
 			}
 			else if(command.equals("LEAVE")) {
+				
+				TableThread t = getTable(session);
+				
+				if (t.getRoundStatus()) {
+					this.sendMessage(session, "ERR|PLAYING|INVLEAVE");
+					return;
+				}
+				
+				
 				players.get(findPlayer(session)).setAction(message);	
 			}
 		}
@@ -114,7 +133,7 @@ public class ServerSocket {
 					t = tables.get(tableNum);
 				} catch (Exception e) {
 					System.out.println("Table could not be found.");
-					sendMessage(session, "Table could not be found.");
+					sendMessage(session, "ERR|OUTTABLE|TABDNE");
 					return;
 				}
 				
@@ -137,7 +156,7 @@ public class ServerSocket {
 				
 				else {
 					System.out.println("Table is full.");
-					sendMessage(session, "The table you chose is full.");
+					sendMessage(session, "ERR|OUTTABLE|TABFULL");
 					return;
 				}
 				
@@ -145,6 +164,18 @@ public class ServerSocket {
 			
 			else if (command.equals("NEWTABLE")) {
 				int maxNum = Integer.parseInt(sc.next());
+				
+				if (maxNum < 1) {
+					sendMessage(session, "ERR|OUTTABLE|SIZEINV");
+					return;
+				}
+				
+				if (username == "GUEST" ) {
+					sendMessage(session, "ERR|OUTTABLE|GUEST");
+					return;
+				}
+				
+				
 				PlayerThread pt = new PlayerThread(sessionVector.indexOf(session), username, null);
 				players.add(pt);
 				System.out.println("Table created! for " + findPlayer(session));
@@ -194,7 +225,7 @@ public class ServerSocket {
 	}
 	
 	private TableThread createTable(PlayerThread pt, int max) {
-		TableThread t = new TableThread(pt, max);
+		TableThread t = new TableThread(pt, max, true);
 		tables.add(t);
 		return t;
 	}
@@ -247,13 +278,9 @@ public class ServerSocket {
 	}
 	
 	public void broadcastToOthersAtTable(String message, Session current) {
-		System.out.println("ServerSocket: Broadcasting message: " + message);
 		TableThread t = getTable(current);
-		System.out.println("Table got owner: " + t.owner.username);
 		Vector<PlayerThread> tablePlayers = t.getPlayers();
-		System.out.println("Table has this many players: " + tablePlayers.size());
 		PlayerThread currentPlayer = players.elementAt(findPlayer(current));
-		System.out.println("reached line 277 in broadcast");
 		for (PlayerThread pt : tablePlayers) {
 			if(!pt.equals(currentPlayer)) {
 				int sessionIndex = pt.sessionIndex;

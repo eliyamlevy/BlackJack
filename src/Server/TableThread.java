@@ -310,7 +310,7 @@ public class TableThread extends Thread{
 		return card;
 	}
 	
-	private Boolean allReady() {
+	public Boolean allReady() {
 		for (PlayerThread pt : players) {
 			if (!pt.isReady()) return false;
 		}

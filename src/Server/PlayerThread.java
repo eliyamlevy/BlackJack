@@ -117,7 +117,6 @@ public class PlayerThread extends Thread{
 						Thread.sleep(10);
 					}
 					
-					
 					System.out.println("Getting "+username+"'s bet.");
 					
 					String [] details = action.split("\\|");
