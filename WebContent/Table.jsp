@@ -255,11 +255,6 @@
 			Console Input: <input type="text" name="message"> <br>                                                                                                                                     
 			<input type="submit" name="submit" value="Send Message">                                                                                                                      
 		</form>    
-		                                                                                                                                                                                                                                                                                                                                   
-		                                                                                                                                                                                                                                                                                                                                  
-		<br />  
-		
-		
 		
 		<br>
 		
@@ -270,12 +265,6 @@
 		</div> 
 		
 		<div id="Status">
-			In Table or Not: <div id="tableStatus"> </div> 
-			<br>
-			In Round or Not: <div id="roundStatus"> </div> 
-			<br>
-			Amount of Players in Table: <div id="playerCount"> </div> <br>
-			
 			List of Players in Table: <div id="playerList"> </div> 
 		</div>
 		
