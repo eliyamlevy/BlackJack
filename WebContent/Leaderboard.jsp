@@ -37,8 +37,12 @@
 		<meta charset="UTF-8">
 		<title>Leaderboard</title>
 		<link rel="stylesheet" type="text/css" href="Assets/leaderboard.css" />
+		<link rel="shortcut icon" href="Assets/favicon.ico" type="image/x-icon">
 	</head>
 	<body>
+		<div id="navigator">
+			<a id="blackjack" href="${pageContext.request.contextPath}/HomePage.jsp">B L A C K J A C K</a>
+		</div>
 		<div id="background"></div>
 		<div id="container">
 			<span id="title">Leaderboard</span>

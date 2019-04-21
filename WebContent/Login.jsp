@@ -6,6 +6,7 @@
 		<meta charset="UTF-8">
 		<title>Login</title>
 		<link rel="stylesheet" type="text/css" href="Assets/login.css" />
+		<link rel="shortcut icon" href="Assets/favicon.ico" type="image/x-icon">
 
 		<script>
 
@@ -34,6 +35,9 @@
 	</head>
 
 	<body>
+		<div id="navigator">
+			<a id="blackjack" href="${pageContext.request.contextPath}/WelcomePage.jsp">B L A C K J A C K</a>
+		</div>
 		<div id="background">
 		</div>
 		<div id="container">
@@ -42,7 +46,7 @@
 				Username <br /><input type="text" name="username" id="username"><br />
 				Password <br /><input type="password" name="password" id="password"><br />
 				<span id="errorMessage"></span><br />
-				<input type="submit" value="Login">
+				<input type="submit" value="Login" id="submit">
 			</form>
 		</div>
 	</body>

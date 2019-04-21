@@ -1,31 +1,80 @@
 @charset "UTF-8";
 
+@font-face{
+ font-family: 'welcome';
+ src: url('berkshireswash-regular.ttf') format('truetype');
+}
+
+@font-face{
+ font-family: 'strong';
+ src: url('Universal_Serif.ttf') format('truetype');
+}
+
+@font-face{
+ font-family: 'navi';
+ src: url('Carnevalee_Freakshow.ttf') format('truetype');
+}
+
+#navigator {
+	background-color: black;
+	width: 100vw;
+	height: 10vh;
+	z-index: 100;
+	position: fixed;
+	top: 0%;
+	left: 0%;
+	text-align: center;
+}
+
+#blackjack {
+	font-family: navi;
+	color: white;
+	text-shadow: 2px 2px red;
+	font-size: 6vh;
+	position: relative;
+	top: 1vh;
+}
+
+a {
+    color: white;
+    text-decoration: none;
+}
+
+a:hover {
+     color:gold; 
+     text-decoration:none; 
+     cursor:pointer;  
+}
 
 #background {
 	position:fixed;
-	background-image: url("background.jpg");
+	background-image: url("joker.jpg");
 	background-repeat: no repeat;
 	background-size: cover;
-	filter: blur(4px);
-	height: 101vh;
-	width: 101vw;
-	top: -1vh;
+	/* filter: blur(4px); */
+	height: 92vh;
+	width: 102vw;
+	top: 9vh;
 	left: -1vw;
 }
 
 #title1{
 	font-size: 4vh;
 	position: relative;
-	top: 30vh;
+	top: 25vh;
 	left: 10vw;
 	width: 30vw;
+	font-family: welcome;
+	color: gold;
 }
 #title2{
 	font-size: 8vh;
 	position:relative;
-	top: 30vh;
+	top: 25vh;
 	left: 15vw;
 	width: 50vw;
+	font-family: strong;
+	color: gold;
 }
 
 a {
@@ -37,13 +86,13 @@ a {
 
 #menu {
 	position: fixed;
-	left: 60vw;
+	left: 20vw;
 	top: 55vh;
 	width: 10%;
 	height: 30%;
 }
 .menuEntry{
-	font-size: 3vh;
+	font-size: 4vh;
 	background-color:red;
 	position: relative;
 	margin: 3vh;
@@ -51,4 +100,5 @@ a {
     height: 10vh;
     text-align: center;
     border-radius: 2vh;
+    font-family: navi;
 }

@@ -1,7 +1,44 @@
 @charset "UTF-8";
 
-body{
-	color: black;
+@font-face{
+ font-family: 'regular';
+ src: url('unispace_rg.ttf') format('truetype');
+}
+
+@font-face{
+ font-family: 'navi';
+ src: url('Carnevalee_Freakshow.ttf') format('truetype');
+}
+
+#navigator {
+	background-color: black;
+	width: 100vw;
+	height: 10vh;
+	z-index: 100;
+	position: fixed;
+	top: 0%;
+	left: 0%;
+	text-align: center;
+}
+
+#blackjack {
+	font-family: navi;
+	color: white;
+	text-shadow: 2px 2px red;
+	font-size: 6vh;
+	position: relative;
+	top: 1vh;
+}
+
+a {
+    color: white;
+    text-decoration: none;
+}
+
+a:hover {
+     color:gold; 
+     text-decoration:none; 
+     cursor:pointer;  
 }
 
 #background {
@@ -9,21 +46,21 @@ body{
 	background-image: url("leaderboard.jpg");
 	background-repeat: no repeat;
 	background-size: cover;
-	filter: blur(3px);
-	height: 101%;
-	width: 101%;
-	left: -0.5%;
-	top: -0.5%;
+	height: 108%;
+	width: 105%;
+	left: -2%;
+	top: -3%;
 }
 
 #container {
+	font-family: regular;
 	color: white;
 	position: fixed;
-	top: 10%;
-	left: 10%;
+	top: 12%;
+	left: 5%;
 	height: 80%;
 	width: 45%;
-	background-color: rgba(169,169,169, 0.5);
+	background-color: rgba(169,169,169, 0.8);
 	border-radius: 5%;
 }
 

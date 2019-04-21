@@ -1,30 +1,72 @@
 @charset "UTF-8";
 
+@font-face{
+ font-family: 'regular';
+ src: url('unispace_rg.ttf') format('truetype');
+}
+
+@font-face{
+ font-family: 'navi';
+ src: url('Carnevalee_Freakshow.ttf') format('truetype');
+}
+
+#navigator {
+	background-color: black;
+	width: 100vw;
+	height: 10vh;
+	z-index: 100;
+	position: fixed;
+	top: 0%;
+	left: 0%;
+	text-align: center;
+}
+
+#blackjack {
+	font-family: navi;
+	color: white;
+	text-shadow: 2px 2px red;
+	font-size: 6vh;
+	position: relative;
+	top: 1vh;
+}
+
+a {
+    color: white;
+    text-decoration: none;
+}
+
+a:hover {
+     color:gold; 
+     text-decoration:none; 
+     cursor:pointer;  
+}
+
 #background {
 	position:fixed;
-	background-image: url("loginBG.jpg");
+	background-image: url("joker_2.jpg");
 	background-repeat: no repeat;
 	background-size: cover;
 	filter: blur(4px);
-	height: 101%;
-	width: 101%;
-	left: -0.5%;
-	top: -0.5%;
+	height: 92vh;
+	width: 102vw;
+	top: 9vh;
+	left: -1vw;
 }
 
 #container {
 	color: white;
 	position: fixed;
 	top: 25%;
-	left: 50%;
+	left: 55%;
 	height: 50%;
 	width: 35%;
 	background-color: rgba(169,169,169, 0.5);
 	border-radius: 5%;
+	font-family: regular;
 }
 
 #header {
-	font-size: 5vh;
+	font-size: 4vh;
 	display: block;
 	position: relative;
 	padding: 4%;
@@ -46,11 +88,21 @@ input {
 }
 
 #submit {
-	background-color: red;
-    border-radius: 1vh;
-    color: white;
-    font-size: 50%;
-    padding: 1%;
-    border-color: red;
+	margin-left: 1%;
+	background-color: #bbb;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 6px;
+	color: #fff;
+	width: 30%;
     position: relative;
+    left: 30%;
+    top: 5%;
+    font-family: 'regular';
+}
+
+#submit:hover {
+  border: none;
+  background: #32b600;
+  box-shadow: 0px 0px 1px #777;
 }
