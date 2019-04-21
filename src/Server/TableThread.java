@@ -290,7 +290,7 @@ public class TableThread extends Thread{
 				if(players.get(i).getBalance()==0)
 				{
 					System.out.println(players.get(i).username+" is out of money");
-					//For now just setting balance to 500
+					players.get(i).increaseBailout();
 					players.get(i).setBalance(500);
 					//Remove them or something idk
 				}
