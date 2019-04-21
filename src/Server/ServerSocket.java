@@ -77,11 +77,17 @@ public class ServerSocket {
 			
 			else if(command.equals("HIT")) {
 				players.get(findPlayer(session)).setAction(message);
+				String result = players.get(findPlayer(session)).getResult();
 				
-				TableThread t = getTable(session);
-								
-				this.sendMessage(session, this.getInGameUpdate(t));
-				this.broadcastToOthersAtTable(this.getInGameUpdate(t), session);
+				if (result == "SUCCESS") {
+					TableThread t = this.getTable(session);
+					this.sendMessage(session, this.getInGameUpdate(t));
+					this.broadcastToOthersAtTable(this.getInGameUpdate(t), session);
+				}
+				
+				else {
+					this.sendMessage(session, result);
+				}	
 				
 			}
 			
@@ -102,7 +108,21 @@ public class ServerSocket {
 			}
 			
 			else if(command.equals("STAY")) {
+				
 				players.get(findPlayer(session)).setAction(message);
+				String result = players.get(findPlayer(session)).getResult();
+				
+				if (result == "SUCCESS") {
+					TableThread t = this.getTable(session);
+					this.sendMessage(session, this.getInGameUpdate(t));
+					this.broadcastToOthersAtTable(this.getInGameUpdate(t), session);
+				}
+				
+				else {
+					this.sendMessage(session, result);
+				}	
+				
+				
 			}
 			else if(command.equals("LEAVE")) {
 				

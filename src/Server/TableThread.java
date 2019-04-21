@@ -297,6 +297,13 @@ public class TableThread extends Thread{
 			}
 			
 			System.out.println("TableThread: Round over, resetting.");
+			
+			for(int i = 0; i < players.size();i++)
+			{
+				players.get(i).setScore(0);
+				players.get(i).clearHand();
+			}
+			
 			inRound = false;
 			setNotReady();
 			owner.SetStart(false);

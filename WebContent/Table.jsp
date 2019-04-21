@@ -78,14 +78,15 @@
 								var index = 4;
 								for (i = 0; i < playerCount; i++) {
 									var playerLine = (i+1) + ": ";
-									console.log("info:" + info[index] + " " + info[index+1]);
 									if(info[++index] === "TURN") {
 										playerLine += "<b><i>" + info[index - 1] + "</i></b>: Score:" + info[++index] + " <br />";
 										if(info[index - 2] === username) {
+											console.log("i: " + i + " info[index-2]: " + info[index - 2] + " info[index-1]: " + info[index - 1]);
 											state = 4;
 											var numCards = info[++index];
+											console.log("i: " + i + " numCards:" + info[index] + " user: " + info[index - 3]);
 											document.getElementById("hand").innerHTML = "Your Hand: <br />";
-											for(i = 0; i < numCards; i++) {
+											for(j = 0; j < numCards; j++) {
 												document.getElementById("hand").innerHTML += info[++index];
 											}
 										}
@@ -97,18 +98,18 @@
 									else {
 										
 										playerLine += info[index - 1] + ": Score:" + info[++index] + " <br />";
-										if(info[index - 1] === username) {
+										if(info[index - 2] === username) {
 											state = 3;
 										}
-										console.log("in else before numcars " + index + " " + info[index]);
+										console.log("i: " + i + " in else before numcars " + index + " " + info[index] + " state: " + state);
 										var numCards = info[++index];
-										console.log("in else after numcars " + index + " " + numCards);
+										console.log("i: " + i + " in else after numcars " + index + " " + numCards);
 										index += parseInt(numCards);
-										console.log("in else after numcars " + index  + " " + numCards);
+										console.log("i: " + i + " in else after numcars " + index  + " " + numCards);
 									}
 									document.getElementById("playerList").innerHTML += playerLine;
 									++index;
-									console.log(index);
+									console.log("Out of loop: " +  index);
 								}
 								
 							}
@@ -299,7 +300,7 @@
 						<input type="button" value="Hit" onclick="return hit();">
 						<input type="button" value="Stay" onclick="return stay();">
 						<br />
-						<input type="number" name="betInput"> 
+						<input type="text" name="betInput"> 
 						<input type="button" value="Bet" onclick="return bet();">
 					</form>
 				</div>
