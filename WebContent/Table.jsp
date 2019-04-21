@@ -42,8 +42,8 @@
 				socket.onopen = function(event) {
 					document.getElementById("mychat").innerHTML += "Connected<br>";
 					document.getElementById("reconnect").style.display = "none";
-					list();
 					showStateDiv();
+					list();
 				}
 				
 				socket.onmessage = function(event) {
@@ -54,16 +54,26 @@
 						if (info[1] === "INTABLE") {
 							if (info[2] === "WAITING") {
 								state = 2;
+								document.getElementById("playerList").innerHTML = "";
+								var playerCount = info[3];
+								
+								for (i = 0; playerCount; i++) {
+									var playerLine = i+1 + ": ";
+									if(info[5+2*i] === "READY") {
+										playerLine += "<b><i>" + info[4+2*i] + "</i></b> <br />";
+									}
+									document.getElementById("playerList").innerHTML += playerLine;
+								}
 							}
-							else { 
+							else {
+								document.getElementById("playerList").innerHTML = "";
+								var playerCount = info[3];
+								
+								for (i = 0; playerCount; i++) {
+									var playerLine = i+1 + ": " + info[4+i] + " <br />";
+									document.getElementById("playerList").innerHTML += playerLine;
+								}
 								state = 3;
-							}
-							//document.getElementById("playerCount").innerHTML = info[3];
-							document.getElementById("playerList").innerHTML = "";
-							var playerCount = info[3];
-							
-							for (i = 0; i<playerCount; i++) {
-								document.getElementById("playerList").innerHTML += i+1 + ": " + info[4+i] + "<br>";
 							}
 						}
 					}
