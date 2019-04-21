@@ -1,11 +1,9 @@
 package Server;
 import java.util.Random;
 import java.util.Vector;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 import Game.BlackJackHelpers;
+import Game.DealerAI;
 
 public class TableThread extends Thread{
 	public PlayerThread owner = null;
@@ -94,6 +92,14 @@ public class TableThread extends Thread{
 			inRound = true;
 			System.out.println("TableThread: Table has started.");
 			scores.clear();
+			
+			DealerAI dealer = new DealerAI();
+			dealer.hand = new Vector<Integer>();
+			
+			System.out.println("Dealer's cards dealt.");
+			
+			dealer.hand.add(BlackJackHelpers.DealCard(deck,r));
+			dealer.hand.add(BlackJackHelpers.DealCard(deck,r));
 
 			
 			for (int i = 0; i<players.size(); i++) {
@@ -114,6 +120,48 @@ public class TableThread extends Thread{
 				scores.add(players.get(i).getScore());
 				System.out.println("Player " + i + "'s score is " + players.get(i).getScore());
 			}
+			
+			System.out.println("Dealer's turn.");
+			dealer.hitorstay(deck, r);
+			
+			System.out.println("Everyone has finished. Calculating results.");
+			int dscore = BlackJackHelpers.GetIdealScore(dealer.hand);
+			for(int i=0; i<players.size();i++)
+			{
+				int curBal = players.get(i).getBalance();
+				int curBet = players.get(i).getBet();
+				int pscore = scores.get(i);
+				System.out.println("Player "+(i+1)+":");
+				if(players.get(i).getBlackjack() == true)
+				{
+					System.out.println(players.get(i).username+" got a blackjack!  Win.");
+					players.get(i).setBalance(curBal+(2*curBet));
+				}
+				else if(pscore>21)
+				{
+					System.out.println(players.get(i).username+" has busted ("+pscore+"). Loss.");
+				}
+				else if(dscore>21)
+				{
+					System.out.println("Dealer ("+dscore+") busted, so "+players.get(i).username+" Wins.");
+					players.get(i).setBalance(curBal+(2*curBet));
+				}
+				else if(pscore<dscore)
+				{
+					System.out.println("Dealer ("+dscore+") beat "+players.get(i).username+" ("+pscore+"). Loss.");
+				}
+				else if(pscore>dscore)
+				{
+					System.out.println("Dealer ("+dscore+") lost to "+players.get(i).username+" ("+pscore+"). Win.");
+					players.get(i).setBalance(curBal+(2*curBet));
+				}
+				else if (dscore == pscore)
+				{
+					System.out.println("Dealer ("+dscore+") tied with "+players.get(i).username+" ("+pscore+"). Push.");
+					players.get(i).setBalance(curBal+(curBet));
+				}
+			}
+			
 			
 			System.out.println("TableThread: Round over, resetting.");
 			inRound = false;
