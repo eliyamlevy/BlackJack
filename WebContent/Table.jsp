@@ -91,14 +91,14 @@
 										else {
 											state = 3;
 											var numCards = info[++index];
-											index += numcards;
+											index += numCards;
 										}
 									}
 									else {
 										playerLine += info[index - 1] + ": Score:" + info[++index] + " <br />";
 										state = 3;
 										var numCards = info[++index];
-										index += numcards;
+										index += numCards;
 									}
 									document.getElementById("playerList").innerHTML += playerLine;
 									index++;
@@ -108,7 +108,6 @@
 							else {
 								document.getElementById("playerList").innerHTML = "";
 								var playerCount = info[3];
-								
 								for (i = 0; playerCount; i++) {
 									var playerLine = i+1 + ": " + info[4+i] + " <br />";
 									document.getElementById("playerList").innerHTML += playerLine;
