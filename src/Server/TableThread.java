@@ -285,6 +285,17 @@ public class TableThread extends Thread{
 			
 			}	
 			
+			for(int i = 0; i < players.size();i++)
+			{
+				if(players.get(i).getBalance()==0)
+				{
+					System.out.println(players.get(i).username+" is out of money");
+					//For now just setting balance to 500
+					players.get(i).setBalance(500);
+					//Remove them or something idk
+				}
+			}
+			
 			System.out.println("TableThread: Round over, resetting.");
 			inRound = false;
 			setNotReady();
