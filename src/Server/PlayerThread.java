@@ -14,6 +14,7 @@ public class PlayerThread extends Thread{
 	private int balance;
 	private int bet;
 	private int score;
+	private int bailoutTokens;
 	private String action = null;
 	private boolean isTurn = false;
 	private boolean blackjack = false;
@@ -52,6 +53,9 @@ public class PlayerThread extends Thread{
 	public int getScore() {
 		return score;
 	}
+	public int getBailout() {
+		return bailoutTokens;
+	}
 	
 	public void setBalance(int newBalance) {
 		balance = newBalance;
@@ -60,6 +64,9 @@ public class PlayerThread extends Thread{
 	public void setBet(int newBet) {
 		bet = newBet;
 		return;
+	}
+	public void increaseBailout() {
+		bailoutTokens++;
 	}
 	
 	
