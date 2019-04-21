@@ -29,14 +29,20 @@ public class PlayerThread extends Thread{
 		score = 0;
 		this.start();
 	}
+	
 	public int getBalance() {
 		return balance;
 	}
 	public int getBet() {
 		return bet;
 	}
+	
 	public boolean getBlackjack() {
 		return blackjack;
+	}
+	
+	public int getScore() {
+		return score;
 	}
 	
 	public void setBalance(int newBalance) {
@@ -49,8 +55,8 @@ public class PlayerThread extends Thread{
 	}
 	
 	
-	public int getScore() {
-		return score;
+	public Vector<Integer> getHand() {
+		return hand;
 	}
 	
 	public void setTable(TableThread t) {
@@ -89,16 +95,6 @@ public class PlayerThread extends Thread{
 	}
 	
 	public String getAction() {
-//		while(this.action == null) {
-//			try {
-//				Thread.sleep(50);
-//			} catch (InterruptedException e) {
-//				e.printStackTrace();
-//			}
-//		}
-//		String action = this.action;
-//		this.action = null;
-//		return action;
 		return action;
 	}
 	
@@ -187,45 +183,46 @@ public class PlayerThread extends Thread{
 					//Blackjack = false / hand = current hand / score = BlackJackHelpers.GetIdealScore(hand)
 					
 					//loop through while loop getting hit/stay commands
-//					boolean hitstayloop = true;
-//					while(hitstayloop && !blackjack)
-//					{
-//						
-//						while (action == null) {
-//							Thread.sleep(100);
-//						}
-//						
-//						String [] moveDetails = action.split("\\|");
-//						
-//						
-//						if(moveDetails[2].equals("HIT"))
-//						{
-//							//hand.add(table.dealCard());
-//							if(BlackJackHelpers.GetIdealScore(hand)>21)
-//							{
-//								System.out.println("Player busted. End Turn.");
-//								hitstayloop = false;
-//								this.isTurn = false;
-//								//SEND UPDATE TO TABLE FOR BLACKJACK/HAND/SCORE
-//								//Blackjack = false / hand = current hand / score = BlackJackHelpers.GetIdealScore(hand)
-//							}
-//							else
-//							{
-//								System.out.println("Added card. Player still able to play.");
-//								//SEND UPDATE TO TABLE FOR BLACKJACK/HAND/SCORE
-//								//Blackjack = false / hand = current hand / score = BlackJackHelpers.GetIdealScore(hand)
-//							}
-//						}
-//						else if(moveDetails[3].equals("STAY"))
-//						{
-//							System.out.println("Player stayed. End Turn.");
-//							hitstayloop = false;
-//							this.isTurn = false;
-//							//SEND UPDATE TO TABLE FOR BLACKJACK/HAND/SCORE
-//							//Blackjack = false / hand = current hand / score = BlackJackHelpers.GetIdealScore(hand)
-//						}
-//						action = null;
-//					}
+					boolean hitstayloop = true;
+					while(hitstayloop && !blackjack)
+					{
+						
+						if(details[2].equals("HIT"))
+						{
+							//hand.add(table.dealCard());
+							if(BlackJackHelpers.GetIdealScore(hand)>21)
+							{
+								System.out.println("Player busted. End Turn.");
+								hitstayloop = false;
+								this.isTurn = false;
+								//SEND UPDATE TO TABLE FOR BLACKJACK/HAND/SCORE
+								//Blackjack = false / hand = current hand / score = BlackJackHelpers.GetIdealScore(hand)
+							}
+							else
+							{
+								System.out.println("Added card. Player still able to play.");
+								//SEND UPDATE TO TABLE FOR BLACKJACK/HAND/SCORE
+								//Blackjack = false / hand = current hand / score = BlackJackHelpers.GetIdealScore(hand)
+							}
+						}
+						else if(details[2].equals("STAY"))
+						{
+							System.out.println("Player stayed. End Turn.");
+							hitstayloop = false;
+							this.isTurn = false;
+							//SEND UPDATE TO TABLE FOR BLACKJACK/HAND/SCORE
+							//Blackjack = false / hand = current hand / score = BlackJackHelpers.GetIdealScore(hand)
+						}
+						
+						action = null;
+						
+						while (action == null) {
+							Thread.sleep(10);
+						}
+						
+						details = action.split("\\|");
+						
+					}
 					//Player turn is over
 					//With the updates given player hand should be up to date
 					System.out.println("score is " + BlackJackHelpers.GetIdealScore(hand));

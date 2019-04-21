@@ -3,7 +3,6 @@ package Server;
 import java.io.IOException;
 import java.util.Scanner;
 import java.util.Vector;
-import java.util.concurrent.TimeUnit;
 
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
@@ -51,6 +50,7 @@ public class ServerSocket {
 				TableThread t = getTable(session);
 				
 				sendMessage(session, this.getInGameUpdate(t));	
+				this.broadcastToOthersAtTable(this.getInGameUpdate(t), session);
 				
 			}
 			
@@ -60,8 +60,8 @@ public class ServerSocket {
 				
 				TableThread t = getTable(session);
 				
-				System.out.println(this.getInGameUpdate(t));
 				sendMessage(session, this.getInGameUpdate(t));
+				this.broadcastToOthersAtTable(this.getInGameUpdate(t), session);
 				
 			}
 			
@@ -71,6 +71,7 @@ public class ServerSocket {
 				TableThread t = getTable(session);
 								
 				this.sendMessage(session, this.getInGameUpdate(t));
+				this.broadcastToOthersAtTable(this.getInGameUpdate(t), session);
 				
 			}
 			
@@ -81,6 +82,7 @@ public class ServerSocket {
 				if (result == "SUCCESS") {
 					TableThread t = this.getTable(session);
 					this.sendMessage(session, this.getInGameUpdate(t));
+					this.broadcastToOthersAtTable(this.getInGameUpdate(t), session);
 				}
 				
 				else {
@@ -127,10 +129,12 @@ public class ServerSocket {
 					
 					broadcastToOthersAtTable(forClient, session);
 					sendMessage(session, forClient);
+					broadcastToOthersAtTable(forClient, session);
 					sendTableListToAll();
 					System.out.println("Table joined!");
 					//update everyone else who is in that table, that someone else has joined
 				}
+				
 				else {
 					System.out.println("Table is full.");
 					sendMessage(session, "The table you chose is full.");
@@ -309,7 +313,6 @@ public class ServerSocket {
 		try {
 			Thread.sleep(50);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

@@ -100,7 +100,6 @@ public class TableThread extends Thread{
 			
 			dealer.hand.add(BlackJackHelpers.DealCard(deck,r));
 			dealer.hand.add(BlackJackHelpers.DealCard(deck,r));
-
 			
 			for (int i = 0; i<players.size(); i++) {
 				players.get(i).setTurn(true);
@@ -118,7 +117,8 @@ public class TableThread extends Thread{
 				}
 				
 				scores.add(players.get(i).getScore());
-				System.out.println("Player " + i + "'s score is " + players.get(i).getScore());
+				System.out.println("Player " + i + "'s score is " + players.get(i).getScore());		
+				
 			}
 			
 			System.out.println("Dealer's turn.");
@@ -161,7 +161,6 @@ public class TableThread extends Thread{
 					players.get(i).setBalance(curBal+(curBet));
 				}
 			}
-			
 			
 			System.out.println("TableThread: Round over, resetting.");
 			inRound = false;
