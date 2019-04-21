@@ -42,9 +42,8 @@
 				socket.onopen = function(event) {
 					document.getElementById("mychat").innerHTML += "Connected<br>";
 					document.getElementById("reconnect").style.display = "none";
-					document.getElementById("tableStatus").innerHTML = "Not In Table";
 					list();
-					showStateDiv()
+					showStateDiv();
 				}
 				
 				socket.onmessage = function(event) {
@@ -53,26 +52,19 @@
 					
 					if (info[0] === "UPD") {
 						if (info[1] === "INTABLE") {
-							document.getElementById("tableStatus").innerHTML = "In Table";
-							
 							if (info[2] === "WAITING") {
-								document.getElementById("roundStatus").innerHTML = "Not in Round";
 								state = 2;
 							}
-							
 							else { 
-								document.getElementById("roundStatus").innerHTML = "In Round";
 								state = 3;
 							}
-							
-							document.getElementById("playerCount").innerHTML = info[3];
+							//document.getElementById("playerCount").innerHTML = info[3];
 							document.getElementById("playerList").innerHTML = "";
 							var playerCount = info[3];
 							
 							for (i = 0; i<playerCount; i++) {
 								document.getElementById("playerList").innerHTML += i+1 + ": " + info[4+i] + "<br>";
 							}
-							
 						}
 					}
 					
@@ -161,14 +153,15 @@
 				if(state === 0) {
 					document.getElementById("tableStuff").style.display = "none";
 					document.getElementById("openTable").style.display = "none";
+					document.getElementById("tableStatus").style.display = "none";
 				}
 				else if(state === 1) {
 					document.getElementById("tableStuff").style.display = "block";
-					document.getElementById("openTable").style.display = "none";
 				}
 				else if(state === 2) {
 					document.getElementById("tableStuff").style.display = "none";
 					document.getElementById("openTable").style.display = "block";
+					document.getElementById("tableStatus").style.display = "block";
 					document.getElementById("yourTurn").style.display = "none";
 					document.getElementById("notTurn").style.display = "none";
 					document.getElementById("tableWait").style.display = "block";
@@ -178,6 +171,19 @@
 					document.getElementById("notTurn").style.display = "block";
 					document.getElementById("tableWait").style.display = "none";
 				}
+			}
+			
+			
+			function showDebug() {
+				document.getElementById("debuggingTools").style.display = "block";
+				document.getElementById("debugSwitch").style.display = "none";
+				return false;
+			}
+			
+			function hideDebug() {
+				document.getElementById("debuggingTools").style.display = "none";
+				document.getElementById("debugSwitch").style.display = "block";
+				return false;
 			}
 			
 			function sleep(milliseconds) {
@@ -199,7 +205,9 @@
 					<input type="submit" name="submit" value="Login">                                                                                                                   
 				</form> 
 			</div>
-			
+			<div id="tableStatus">
+				List of Players in Table: <div id="playerList"> </div> 
+			</div>
 			<div id="tableStuff">
 				<div id="tableList">
 					Active Tables: <div id="tables"> </div> 
@@ -247,29 +255,37 @@
 				</div>
 			</div>         
 		</div>
-		<br /><br /><br /><br /><br />
 		
-		<!-- This stuff is the old stuff -->         
-		                                                                                                                       
-		<form name="chatForm" onsubmit="return sendMessage();">                                                                                                                             
-			Console Input: <input type="text" name="message"> <br>                                                                                                                                     
-			<input type="submit" name="submit" value="Send Message">                                                                                                                      
-		</form>    
+		<br /><br />
 		
-		<br>
+		<form id="debugSwitch" name="debugging" onsubmit="return showDebug();">                                                                                                                                                                                                                                                 
+			<input type="submit" name="debugging" value="Debug?">                                                                                                                      
+		</form>   
 		
-		<div id="reconnect" style="display: none;">
-			<form name="reconnectForm" onsubmit="return connectToServer();">                                                                                                                                 
-				<input type="submit" name="submit" value="Reconnect to server?">                                                                                                                      
-			</form> 
-		</div> 
-		
-		<div id="Status">
-			List of Players in Table: <div id="playerList"> </div> 
-		</div>
-		
-		<div id="mychat">
-		Console: <br>
-		</div>                                                                                                                                                           
+		<!-- This stuff is the old stuff -->   
+		<div id="debuggingTools" style="display: none;">
+			<h3>Debugging Tools</h3>      
+			                                                                                                                       
+			<form name="chatForm" onsubmit="return sendMessage();">                                                                                                                             
+				Console Input: <input type="text" name="message"> <br>                                                                                                                                     
+				<input type="submit" name="submit" value="Send Message">                                                                                                                      
+			</form>    
+			
+			<br>
+			
+			<div id="reconnect" style="display: none;">
+				<form name="reconnectForm" onsubmit="return connectToServer();">                                                                                                                                 
+					<input type="submit" name="submit" value="Reconnect to server?">                                                                                                                      
+				</form> 
+			</div> 
+			
+			<div id="mychat">
+			Console: <br>
+			</div>  
+			
+			<form name="hideDebugging" onsubmit="return hideDebug();">                                                                                                                                                                                                                                                 
+				<input type="submit" name="debugging?" value="Hide Debug?">                                                                                                                      
+			</form>  
+		</div>                                                                                                                                             
 	</body>                                                                                                                                                                               
 </html>                                                                                                                                                                                   
