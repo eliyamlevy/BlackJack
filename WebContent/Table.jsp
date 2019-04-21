@@ -30,7 +30,7 @@
 			}
 			
 			function list() {
-				var message = "a|CMD|LIST";
+				var message = "dev|CMD|LIST";
 				socket.send(message);
 				return false;
 			}
@@ -54,9 +54,30 @@
 						if (info[1] === "INTABLE") {
 							if (info[2] === "WAITING") {
 								state = 2;
-								
+								//Clear PlayerList
+								document.getElementById("playerList").innerHTML = "";
+								//Get num players
+								var playerCount = info[3];
+								//List all players
+								for (i = 0; i < playerCount; i++) {
+									var playerLine = (i+1) + ": ";
+									if(info[5+2*i] === "READY") {
+										playerLine += "<b><i>" + info[4+2*i] + "</i></b> <br />";
+									}
+									else {
+										playerLine += info[4+2*i] + " <br />";
+									}
+									document.getElementById("playerList").innerHTML += playerLine;
+								}
 							}
 							else {
+								document.getElementById("playerList").innerHTML = "";
+								var playerCount = info[3];
+								
+								for (i = 0; playerCount; i++) {
+									var playerLine = i+1 + ": " + info[4+i] + " <br />";
+									document.getElementById("playerList").innerHTML += playerLine;
+								}
 								state = 3;
 							}
 						}
