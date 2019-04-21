@@ -18,10 +18,14 @@
 			var socket;  
 			
 			var username;
+
+			var state = 0;
 			
 			function setUsername() {
+				state = 1;
 				username = document.getUsernameForm.username.value;
 				document.getElementById("usernameDiv").innerHTML = "Hello " + username + "!";
+				showStateDiv();
 				return false;
 			}
 			
@@ -40,6 +44,7 @@
 					document.getElementById("reconnect").style.display = "none";
 					document.getElementById("tableStatus").innerHTML = "Not In Table";
 					list();
+					showStateDiv()
 				}
 				
 				socket.onmessage = function(event) {
@@ -52,9 +57,13 @@
 							
 							if (info[2] === "WAITING") {
 								document.getElementById("roundStatus").innerHTML = "Not in Round";
+								state = 1;
 							}
 							
-							else document.getElementById("roundStatus").innerHTML = "In Round";
+							else { 
+								document.getElementById("roundStatus").innerHTML = "In Round";
+								state = 2;
+							}
 							
 							document.getElementById("playerCount").innerHTML = info[3];
 							document.getElementById("playerList").innerHTML = "";
@@ -81,6 +90,7 @@
 					}
 					
 					document.getElementById("mychat").innerHTML += event.data + "<br>";
+					showStateDiv();
 				}
 				
 				socket.onclose = function(event) {
@@ -98,12 +108,16 @@
 			function createTable() {
 				var message = username + "|CMD|NEWTABLE|" + document.createTableForm.size.value;
 				socket.send(message);
+				state = 2;
+				showStateDiv();
 				return false;
 			}
 			
 			function joinTable() {
 				var message = username + "|CMD|JOINTABLE|" + document.joinTableForm.index.value;
 				socket.send(message);
+				state = 2;
+				showStateDiv();
 				return false;
 			}
 			
@@ -135,6 +149,31 @@
 				alert("Sorry you can't do that yet");
 				return false;
 			}
+			
+			function showStateDiv() {
+				alert("State: " + state);
+				if(state === 0) {
+					document.getElementById("tableStuff").style.display = "none";
+					document.getElementById("openTable").style.display = "none";
+				}
+				else if(state === 1) {
+					document.getElementById("tableStuff").style.display = "block";
+					document.getElementById("openTable").style.display = "none";
+				}
+				else if(state === 2) {
+					document.getElementById("tableStuff").style.display = "none";
+					document.getElementById("openTable").style.display = "block";
+				}
+			}
+			
+			function sleep(milliseconds) {
+				var start = new Date().getTime();
+				for (var i = 0; i < 1e7; i++) {
+				    if ((new Date().getTime() - start) > milliseconds){
+				    	break;
+					}
+				}
+			}
 			                                                                                                                                                                                                                                                                                                                                                       
 		</script>                                                                                                                                                                         
 	</head>                                                                                                                                                                               
@@ -147,24 +186,25 @@
 				</form> 
 			</div>
 			
-			<div id="tableList">
-				Active Tables: <div id="tables"> </div>
-				
-				<br />
-				
-				<form name="joinTableForm" onsubmit="return joinTable();"> 
-				Join Table: <br>                                                                                                                              
-				Index of Table: <input type="text" name="index"> <br>                                                                                                                                     
-				<input type="submit" name="submit" value="Join Table">                                                                                                                      
-			</form> 
-			</div> 
-			
-			<div id="createTable">
-				<form name="createTableForm" onsubmit="return createTable();"> 
-					Create Table: <br>
-					Size: <input type="text" name="size"> <br>                                                                                                                                     
-					<input type="submit" name="submit" value="Create Table">                                                                                                                      
-				</form> 
+			<div id="tableStuff">
+				<div id="tableList">
+					Active Tables: <div id="tables"> </div> 
+				</div> 
+				<div id="joinTable">
+					<form name="joinTableForm" onsubmit="return joinTable();"> 
+						Join Table: <br>                                                                                                                              
+						Index of Table: <input type="text" name="index"> <br>                                                                                                                                     
+						<input type="submit" name="submit" value="Join Table">                                                                                                                      
+					</form>
+				</div>
+				or ...
+				<div id="createTable">
+					<form name="createTableForm" onsubmit="return createTable();"> 
+						Create Table: <br>
+						Size: <input type="text" name="size"> <br>                                                                                                                                     
+						<input type="submit" name="submit" value="Create Table">                                                                                                                      
+					</form> 
+				</div>
 			</div>
 			
 			<div id="openTable">
