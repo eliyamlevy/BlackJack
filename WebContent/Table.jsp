@@ -18,6 +18,8 @@
 			var socket;  
 			
 			var username;
+			
+			var currentBalance;
 
 			var state = 0;
 			
@@ -79,9 +81,10 @@
 								for (i = 0; i < playerCount; i++) {
 									var playerLine = (i+1) + ": ";
 									if(info[++index] === "TURN") {
-										playerLine += "<b><i>" + info[index - 1] + "</i></b>: Score:" + info[++index] + " <br />";
+										playerLine += "<b><i>" + info[index - 1] + "</i></b>:";
 										if(info[index - 2] === username) {
-											console.log("i: " + i + " info[index-2]: " + info[index - 2] + " info[index-1]: " + info[index - 1]);
+											currentBalance = info[++index];
+											document.getElementById("balance").innerHTML = "Your Balance: " + currentBalance;
 											state = 4;
 											var numCards = info[++index];
 											console.log("i: " + i + " numCards:" + info[index] + " user: " + info[index - 3]);
@@ -91,13 +94,14 @@
 											}
 										}
 										else {
+											playerLine = info[index - 1] + ": Balance: " + info[++index] + " <br />";
 											var numCards = info[++index];
 											index += parseInt(numCards);
 										}
 									}
 									else {
 										
-										playerLine += info[index - 1] + ": Score:" + info[++index] + " <br />";
+										playerLine += info[index - 1] + ": Score: " + info[++index] + " <br />";
 										if(info[index - 2] === username) {
 											state = 3;
 										}
@@ -295,6 +299,7 @@
 				In Table:
 				<div id="yourTurn">
 					<div id="hand"></div>
+					<div id="balance"></div>
 					<form name="yourTurnForm">
 						Your Turn, Please Select a Move: <br>
 						<input type="button" value="Hit" onclick="return hit();">
