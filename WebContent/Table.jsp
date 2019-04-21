@@ -145,6 +145,12 @@
 				return false;
 			}
 			
+			function bet() {
+				var message = username + "|ACT|BET|" + document.yourTurnForm.betInput.value;
+				socket.send(message);
+				return false;
+			}
+			
 			function leave() {
 				alert("Sorry you can't do that yet");
 				return false;
@@ -222,6 +228,9 @@
 						Your Turn, Please Select a Move: <br>
 						<input type="button" value="Hit" onclick="return hit();">
 						<input type="button" value="Stay" onclick="return stay();">
+						<br />
+						<input type="number" name="betInput"> 
+						<input type="button" value="Bet" onclick="return bet();">
 					</form>
 				</div>
 				<div id="notTurn">
