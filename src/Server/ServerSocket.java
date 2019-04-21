@@ -77,6 +77,37 @@ public class ServerSocket {
 				TableThread t = getTable(session);
 				
 				try {
+					Thread.sleep(10);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				
+				if (t.getRoundStatus() == false) {
+					tableStatus = "WAITING"; //print ready/waiting state for everyone!
+				}
+				
+				else tableStatus = "INROUND";
+				
+				String forClient = "UPD|INTABLE|" + tableStatus + "|" + t.getPlayers().size();
+				
+				for (int i = 0; i<t.getPlayers().size(); i++) {
+					forClient = forClient + "|" + t.getPlayers().get(i).username;
+				}
+				
+				System.out.println(forClient);
+				sendMessage(session, forClient);	
+				
+			}
+			
+			else if(command.equals("HIT")) {
+				players.get(findPlayer(session)).setAction(message);
+				
+				//create game state string
+				String tableStatus = null;
+				
+				TableThread t = getTable(session);
+				
+				try {
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
@@ -88,23 +119,38 @@ public class ServerSocket {
 				}
 				
 				else tableStatus = "INROUND";
-				
+							
 				String forClient = "UPD|INTABLE|" + tableStatus + "|" + t.getPlayers().size();
 				
 				for (int i = 0; i<t.getPlayers().size(); i++) {
+					
 					forClient = forClient + "|" + t.getPlayers().get(i).username;
+					
+					if (t.getPlayers().get(i).isTurn()) {
+						forClient = forClient + "|" + "TURN";
+					}
+					
+					else {
+						forClient = forClient + "|" + "NOTTURN";
+					}		
 				}
+								
+				this.sendMessage(session, forClient);
 				
-				sendMessage(session, forClient);	
-				
-			}
-			
-			else if(command.equals("HIT")) {
-				players.get(findPlayer(session)).setAction(message);
 			}
 			
 			else if(command.equals("BET")) {
 				players.get(findPlayer(session)).setAction(message);
+				String result = players.get(findPlayer(session)).getResult();
+				
+				if (result == "SUCCESS") {
+					//update all
+				}
+				
+				else {
+					this.sendMessage(session, result);
+				}	
+				
 			}
 			
 			else if(command.equals("STAY")) {
@@ -139,7 +185,7 @@ public class ServerSocket {
 				}
 				
 				if (t.GetOpenSpots() > 0) {
-					PlayerThread pt = new PlayerThread(sessionVector.indexOf(session), username);
+					PlayerThread pt = new PlayerThread(sessionVector.indexOf(session), username, t);
 					players.add(pt);
 					joinTable(pt, tableNum);
 					System.out.println("Adding player " + username + " to table " + tableNum);
@@ -178,12 +224,12 @@ public class ServerSocket {
 			}
 			
 			else if (command.equals("NEWTABLE")) {
-				System.out.println("REACHED here");
 				int maxNum = Integer.parseInt(sc.next());
-				PlayerThread pt = new PlayerThread(sessionVector.indexOf(session), username);
+				PlayerThread pt = new PlayerThread(sessionVector.indexOf(session), username, null);
 				players.add(pt);
 				System.out.println("Table created! for " + findPlayer(session));
 				TableThread t = createTable(pt, maxNum);
+				pt.setTable(t);
 				//sendMessage to the owner, saying send ready or something if you're done
 				System.out.println("There are now " + tables.size() + " tables.");
 				
@@ -357,6 +403,55 @@ public class ServerSocket {
 	@OnError
 	public void error(Throwable error) {
 		System.out.println("Error!");
+	}
+	
+	private String getInGameUpdate(TableThread t) {
+		
+		String tableStatus = null;
+		
+		if (t.getRoundStatus() == false) {
+			tableStatus = "WAITING";
+		}
+		
+		else tableStatus = "INROUND";
+		
+		String forClient = "UPD|INTABLE|" + tableStatus + "|" + t.getPlayers().size();
+		
+		if (tableStatus == "WAITING") {
+			
+			for (int i = 0; i<t.getPlayers().size(); i++) {
+				
+				forClient = forClient + "|" + t.getPlayers().get(i).username;
+				
+				if (t.getPlayers().get(i).isReady()) {
+					forClient+="|READY";
+				}
+				
+				else forClient+="|NOTREADY";
+				
+			}
+			
+		}
+		
+		else {
+			
+			for (int i = 0; i<t.getPlayers().size(); i++) {
+				
+				forClient = forClient + "|" + t.getPlayers().get(i).username;
+				
+				if (t.getPlayers().get(i).isTurn()) {
+					forClient+="|TURN";
+				}
+				
+				else forClient+="|NOTTURN";
+				
+			}
+			
+			
+			
+		}
+		
+		
 	}
 	
 }

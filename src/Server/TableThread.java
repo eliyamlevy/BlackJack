@@ -1,14 +1,20 @@
 package Server;
+import java.util.Random;
 import java.util.Vector;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+
+import Game.BlackJackHelpers;
 
 public class TableThread extends Thread{
 	public PlayerThread owner = null;
 	private Vector<PlayerThread> players = new Vector<PlayerThread>();
 	private int maxPlayers;
 	private Boolean inRound = false;
+	private Vector<Integer> deck;
+	private Random r;
+	private Vector<Integer> scores;
 	
 	public Boolean getRoundStatus() {
 		System.out.println("Getting round status: " + inRound);
@@ -29,7 +35,12 @@ public class TableThread extends Thread{
 		inRound = false;
 		this.maxPlayers = max;
 		players.add(opt);
+		r = new Random();
+		deck = new Vector<Integer>();
+		scores = new Vector<Integer>();
 		this.start();
+
+		
 	}
 	
 	public void AddPlayer(PlayerThread pt) {
@@ -82,14 +93,26 @@ public class TableThread extends Thread{
 			
 			inRound = true;
 			System.out.println("TableThread: Table has started.");
+			scores.clear();
 
 			
 			for (int i = 0; i<players.size(); i++) {
 				players.get(i).setTurn(true);
 				System.out.println("Checking for input from player: " + i);
-				String input = players.get(i).getAction();
-				System.out.println("Performing input: " + input);
-				players.get(i).setTurn(false);
+//				String input = players.get(i).getAction();
+//				System.out.println("Performing input: " + input);
+//				players.get(i).setTurn(false);
+				
+				while (players.get(i).isTurn()) {
+					try {
+						Thread.sleep(20);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+				
+				scores.add(players.get(i).getScore());
+				System.out.println("Player " + i + "'s score is " + players.get(i).getScore());
 			}
 			
 			System.out.println("TableThread: Round over, resetting.");
@@ -99,7 +122,11 @@ public class TableThread extends Thread{
 				
 		}	
 
-		
+	}
+	
+	public int dealCard() {
+		int card = BlackJackHelpers.DealCard(deck, r);
+		return card;
 	}
 	
 	private Boolean allReady() {
