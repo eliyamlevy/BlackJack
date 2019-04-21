@@ -1,7 +1,5 @@
 package Server;
 import java.util.Vector;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
 
 import Game.BlackJackHelpers;
 
@@ -31,6 +29,25 @@ public class PlayerThread extends Thread{
 		score = 0;
 		this.start();
 	}
+	public int getBalance() {
+		return balance;
+	}
+	public int getBet() {
+		return bet;
+	}
+	public boolean getBlackjack() {
+		return blackjack;
+	}
+	
+	public void setBalance(int newBalance) {
+		balance = newBalance;
+		return;
+	}
+	public void setBet(int newBet) {
+		bet = newBet;
+		return;
+	}
+	
 	
 	public int getScore() {
 		return score;
@@ -117,6 +134,7 @@ public class PlayerThread extends Thread{
 					}
 					
 					bet = Integer.parseInt(details[3]);
+					setBalance(balance-bet);
 					
 					//action string is username|act|bet|amount
 
@@ -161,7 +179,8 @@ public class PlayerThread extends Thread{
 					{
 						blackjack = true;
 						System.out.println("User got a blackjack. End Turn.");
-						result = "SUCCESS";
+						result = "BLACKJACK";
+						setBet((int)(bet*1.5));
 						this.setTurn(false);
 					}
 					//SEND UPDATE TO TABLE FOR BLACKJACK/HAND/SCORE
