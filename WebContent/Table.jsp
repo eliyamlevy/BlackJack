@@ -82,38 +82,38 @@
 									var playerLine = (i+1) + ": ";
 									if(info[++index] === "TURN") {
 										playerLine += "<b><i>" + info[index - 1] + "</i></b>:";
-										if(info[index - 2] === username) {
+										if(info[index - 1] === username) {
 											currentBalance = info[++index];
 											document.getElementById("balance").innerHTML = "Your Balance: " + currentBalance;
+											playerLine += "<br />";
 											state = 4;
 											var numCards = info[++index];
-											console.log("i: " + i + " numCards:" + info[index] + " user: " + info[index - 3]);
 											document.getElementById("hand").innerHTML = "Your Hand: <br />";
 											for(j = 0; j < numCards; j++) {
 												document.getElementById("hand").innerHTML += info[++index] + " ";
 											}
 										}
 										else {
-											playerLine = info[index - 1] + ": Balance: " + info[++index] + " <br />";
+											playerLine += " Balance: " + info[++index] + " <br />";
 											var numCards = info[++index];
 											index += parseInt(numCards);
 										}
 									}
 									else {
-										
-										playerLine += info[index - 1] + ": Score: " + info[++index] + " <br />";
-										if(info[index - 2] === username) {
+										playerLine += info[index - 1];
+										if(info[index - 1] === username) {
+											currentBalance = info[++index];
+											document.getElementById("balance").innerHTML = "Your Balance: " + currentBalance;
 											state = 3;
 										}
-										console.log("i: " + i + " in else before numcars " + index + " " + info[index] + " state: " + state);
+										else {
+											playerLine += ": Balance: " + info[++index] + " <br />";
+										}
 										var numCards = info[++index];
-										console.log("i: " + i + " in else after numcars " + index + " " + numCards);
 										index += parseInt(numCards);
-										console.log("i: " + i + " in else after numcars " + index  + " " + numCards);
 									}
 									document.getElementById("playerList").innerHTML += playerLine;
 									++index;
-									console.log("Out of loop: " +  index);
 								}
 								
 							}
@@ -297,9 +297,9 @@
 			
 			<div id="openTable">
 				In Table:
+				<div id="hand">Your Hand:</div>
+				<div id="balance">Your Balance:</div>
 				<div id="yourTurn">
-					<div id="hand"></div>
-					<div id="balance"></div>
 					<form name="yourTurnForm">
 						Your Turn, Please Select a Move: <br>
 						<input type="button" value="Hit" onclick="return hit();">
