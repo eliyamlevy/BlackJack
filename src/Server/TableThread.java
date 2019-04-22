@@ -14,6 +14,15 @@ public class TableThread extends Thread{
 	private Random r;
 	private Vector<Integer> scores;
 	private boolean modeJustDealer;
+	private int minimumBalance;
+	
+	public int getMinimumBalance() {
+		return minimumBalance;
+	}
+	
+	public PlayerThread getOwner() {
+		return owner;
+	}
 	
 	public Boolean getRoundStatus() {
 		System.out.println("Getting round status: " + inRound);
@@ -28,7 +37,7 @@ public class TableThread extends Thread{
 		return players.contains(pt);
 	}
 	
-	public TableThread(PlayerThread opt, int max,boolean justDealer) {
+	public TableThread(PlayerThread opt, int max,boolean justDealer, int minBal) {
 		owner = opt;
 		owner.SetReady(true); //when owner creates table they are automatically ready
 		inRound = false;
@@ -38,8 +47,8 @@ public class TableThread extends Thread{
 		r = new Random();
 		deck = new Vector<Integer>();
 		scores = new Vector<Integer>();
+		minimumBalance = minBal;
 		this.start();
-
 		
 	}
 	
@@ -146,6 +155,7 @@ public class TableThread extends Thread{
 			}
 			
 			System.out.println("Everyone has finished. Calculating results.");
+			
 			if(modeJustDealer)
 			{
 				System.out.println("Everyone against dealer");

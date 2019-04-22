@@ -1,6 +1,10 @@
 package Server;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.Scanner;
 import java.util.Vector;
 
@@ -30,6 +34,10 @@ public class ServerSocket {
 		
 		
 		System.out.println("Username:" + username);
+		
+
+		
+		
 		String typeTag = sc.next();
 		System.out.println("Type:" + typeTag);
 		//Inside game logic
@@ -126,19 +134,93 @@ public class ServerSocket {
 			}
 			else if(command.equals("LEAVE")) {
 				
+				//GET BALANCE FROM PLAYERTHREAD and update in sql
+				
 				TableThread t = getTable(session);
+				PlayerThread pt = players.elementAt(this.findPlayer(session));
 				
 				if (t.getRoundStatus()) {
 					this.sendMessage(session, "ERR|PLAYING|INVLEAVE");
 					return;
 				}
 				
+				else if (t.getOwner() == pt) {
+					this.sendMessage(session, "ERR|PLAYING|OWNER");
+					return;
+				}
+
+				t.getPlayers().remove(pt);
+				int newBalance = pt.getBalance();
 				
-				players.get(findPlayer(session)).setAction(message);	
+				//UPDATE BALANCE IN DATABASE HERE
+				Connection conn = null;
+				PreparedStatement ps = null;
+				ResultSet rs = null;
+				
+				try {
+					Class.forName("com.mysql.cj.jdbc.Driver");
+					conn = DriverManager.getConnection("jdbc:mysql://localhost/BlackJackDB?user=root&password=0330");
+					ps = conn.prepareStatement("UPDATE Users SET balance = ?, score = ? WHERE username = ?");
+					ps.setInt(1, newBalance);
+					ps.setInt(2, newBalance);
+					ps.setString(3, username);
+					rs = ps.executeQuery();
+				
+				} catch (Exception e) {
+					System.out.println(e.getMessage());
+				}
+				
+				if (t.getPlayers().size() == 1) {
+					tables.remove(t);
+				}
+				
+				else {
+					String broadcastMessage = this.getInGameUpdate(t);
+					//we want to send this to everyone at table t
+					for (PlayerThread newpt : t.getPlayers()) {
+						int sessionIndex = newpt.sessionIndex;
+						sendMessage(sessionVector.get(sessionIndex), broadcastMessage);
+					}	
+				}
+				
+				
+				String clientInfo = "UPD|OUTTABLE" + username + Integer.toString(newBalance);
+				this.sendMessage(session, clientInfo);
+
+				
+					
 			}
 		}
 		//Outside of game logic
 		else if (typeTag.equals("CMD")) {
+			
+			Integer userBalance = 100;
+			Connection conn = null;
+			PreparedStatement ps = null;
+			ResultSet rs = null;
+			
+			if (username == "GUEST") userBalance = 100;
+			else {
+				
+				try {
+				Class.forName("com.mysql.cj.jdbc.Driver");
+				conn = DriverManager.getConnection("jdbc:mysql://localhost/BlackJackDB?user=root&password=0330");
+				ps = conn.prepareStatement("SELECT balance FROM Users WHERE username = ?");
+				ps.setString(1, username);
+				rs = ps.executeQuery();
+				
+				if (rs.next()) {
+					userBalance = rs.getInt("balance");
+				}
+				
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+			}
+				
+			}
+			
+			System.out.println("User balance for " + username + " is " + userBalance);
+			
 			String command = sc.next();
 			System.out.println("Command:" + command);
 			
@@ -157,8 +239,14 @@ public class ServerSocket {
 					return;
 				}
 				
+				if (t.getMinimumBalance() > userBalance) {
+					System.out.println("Balance too low to join.");
+					sendMessage(session, "ERR|OUTTABLE|MINBAL");
+					return;
+				}
+				
 				if (t.GetOpenSpots() > 0) {
-					PlayerThread pt = new PlayerThread(sessionVector.indexOf(session), username, t);
+					PlayerThread pt = new PlayerThread(sessionVector.indexOf(session), username, t, userBalance);
 					players.add(pt);
 					joinTable(pt, tableNum);
 					System.out.println("Adding player " + username + " to table " + tableNum);
@@ -196,7 +284,7 @@ public class ServerSocket {
 				}
 				
 				
-				PlayerThread pt = new PlayerThread(sessionVector.indexOf(session), username, null);
+				PlayerThread pt = new PlayerThread(sessionVector.indexOf(session), username, null, userBalance);
 				players.add(pt);
 				System.out.println("Table created! for " + findPlayer(session));
 				TableThread t = createTable(pt, maxNum);
@@ -245,7 +333,7 @@ public class ServerSocket {
 	}
 	
 	private TableThread createTable(PlayerThread pt, int max) {
-		TableThread t = new TableThread(pt, max, true);
+		TableThread t = new TableThread(pt, max, true, 1);
 		tables.add(t);
 		return t;
 	}
@@ -377,7 +465,8 @@ public class ServerSocket {
 			
 			for (int i = 0; i<t.getPlayers().size(); i++) {
 				
-				forClient = forClient + "|" + t.getPlayers().get(i).username;
+				forClient = forClient + "|" + t.getPlayers().get(i).username + "|" + t.getPlayers().get(i).getBalance();
+//				forClient = forClient + "|" + t.getPlayers().get(i).username;
 				
 				if (t.getPlayers().get(i).isReady()) {
 					forClient+="|READY";
@@ -401,7 +490,7 @@ public class ServerSocket {
 				
 				else forClient+="|NOTTURN";
 				
-				forClient+= "|" + t.getPlayers().get(i).getScore() + "|" + t.getPlayers().get(i).getHand().size();
+				forClient+= "|" + t.getPlayers().get(i).getBalance() + "|" + t.getPlayers().get(i).getHand().size();
 				
 				for (int j = 0; j<t.getPlayers().get(i).getHand().size(); j++) {
 					forClient += "|" + t.getPlayers().get(i).getHand().get(j); //add if they bust/got blackjack
