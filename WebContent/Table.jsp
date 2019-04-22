@@ -188,7 +188,7 @@
 						var index = 1;					
 						
 						for (i = 0; i<tableCount; i++) {
-							document.getElementById("tables").innerHTML += "Table " + info[++index] + " has " + info[++index] + " open spots, and is owned by " +  info[++index] + "<br>";
+							document.getElementById("tables").innerHTML += "<div class='table' id=''>Table: " + info[++index] + " has " + info[++index] + " open spots, and is owned by " +  info[++index] + "</div>"
 						}
 					}
 					
