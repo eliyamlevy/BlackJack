@@ -21,12 +21,12 @@ public class PlayerThread extends Thread{
 	private String result = null;
 	private Vector<Integer> hand;
 	
-	public PlayerThread(int index, String username, TableThread t) {
+	public PlayerThread(int index, String username, TableThread t, int newBalance) {
 		this.username = username;
 		this.sessionIndex = index;
 		this.hand = new Vector<Integer>();
 		this.table = t;
-		balance = 100;
+		balance = newBalance;
 		score = 0;
 		this.start();
 	}
