@@ -64,10 +64,22 @@
 								for (i = 0; i < playerCount; i++) {
 									var playerLine = (i+1) + ": ";
 									if(info[6+3*i] === "READY") {
-										playerLine += "<b><i>" + info[4+3*i] + ": Balance: " +  info[5+3*i] + "</i></b> <br />";
+										if(inf0[4+3*i] === username) {
+											document.getElementById("balance").innerHTML = "Your Balance: " + currentBalance;
+											playerLine += "<b><i>" + info[4+3*i] + "</i></b> <br />";
+										}
+										else {
+											playerLine += "<b><i>" + info[4+3*i] + ": Balance: " +  info[5+3*i] + "</i></b> <br />";
+										}
 									}
 									else {
-										playerLine += info[4+2*i] + ": Balance: "  +  info[5+3*i] + "<br />";
+										if(info[4+3*i] === username) {
+											document.getElementById("balance").innerHTML = "Your Balance: " + currentBalance;
+											playerLine += info[4+3*i] + "<br />";
+										}
+										else {
+											playerLine += info[4+3*i] + ": Balance: "  +  info[5+3*i] + "<br />";
+										}
 									}
 									document.getElementById("playerList").innerHTML += playerLine;
 								}
