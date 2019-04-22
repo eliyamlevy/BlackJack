@@ -152,7 +152,20 @@
 						}
 					}
 					else if(info[0] === "ERR") {
-						
+						if(info[1] === "OUTTABLE") {
+							if(info[2] === "TABDNE") {
+								document.getElementById("outTableErrors").innerHTML = "Table does not exist";
+							}
+							else if(info[2] === "TABFULL") {
+								document.getElementById("outTableErrors").innerHTML = "Given table is full";
+							}
+						}
+						else if(info[1] === "WAITING") {
+							
+						}
+						else if(info[1] === "PLAYING") {
+							
+						}
 					} 
 					
 					document.getElementById("mychat").innerHTML += event.data + "<br>";
@@ -306,6 +319,7 @@
 						<input type="submit" name="submit" value="Create Table">                                                                                                                      
 					</form> 
 				</div>
+				<div class="error" id="outTableErrors"></div>
 			</div>
 			
 			<div id="openTable">
@@ -321,6 +335,7 @@
 						<input type="text" name="betInput"> 
 						<input type="button" value="Bet" onclick="return bet();">
 					</form>
+					<div class="error" id="playingErrors"></div>
 				</div>
 				<div id="notTurn">
 					<!-- Add no turn stuff -->
@@ -333,6 +348,7 @@
 						<input type="button" value="Start" onclick="return start();">
 						<input type="button" value="Leave" onclick="return leave();">
 					</form>
+					<div class="error" id="waitingErrors"></div>
 				</div>
 			</div>         
 		</div>
