@@ -66,7 +66,7 @@
 						else if(info[1] === "ENDGAME") {
 							for(i = 0; i < info[2]; i++) {
 								if(info[3+2*i] === username) {
-									if(info[4+2*i] === "WON") {
+									if(info[4+2*i] === "WIN") {
 										alert("You won this hand!");
 									}
 									else {
