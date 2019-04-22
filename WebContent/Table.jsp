@@ -156,13 +156,14 @@
 								//Now its the dealer display
 								var dNumCards = info[++index];
 								index++;
-								for(d = 0; d < dNumCards) {
-									document.getElementById("hand").innerHTML += info[index + d] + " ";
+								document.getElementById("dealer").innerHTML = "";
+								for(d = 0; d < dNumCards; d++) {
+									document.getElementById("dealer").innerHTML += info[index + d] + " ";
 									if(d < 1) {
-										document.getElementById("hand").innerHTML += "<img class='card' src='Assets/CardsForWebsite/" + info[index + d] + ".png'> ";
+										document.getElementById("dealer").innerHTML += "<img class='card' src='Assets/CardsForWebsite/" + info[index + d] + ".png'> ";
 									}
 									else {
-										document.getElementById("hand").innerHTML += "<img class='card' src='Assets/CardsForWebsite/red_back.png'> ";
+										document.getElementById("dealer").innerHTML += "<img class='card' src='Assets/CardsForWebsite/red_back.png'> ";
 									}
 								}
 							}
