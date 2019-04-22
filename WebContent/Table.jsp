@@ -283,6 +283,7 @@
 					document.getElementById("yourTurn").style.display = "none";
 					document.getElementById("notTurn").style.display = "none";
 					document.getElementById("tableWait").style.display = "block";
+					document.getElementById("hand").innerHTML = "Your Hand";
 				}
 				else if(state === 3) {
 					document.getElementById("yourTurn").style.display = "none";
