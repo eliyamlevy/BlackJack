@@ -100,9 +100,11 @@
 											playerLine += "<br />";
 											state = 4;
 											var numCards = info[++index];
+											//Update Hand
 											document.getElementById("hand").innerHTML = "Your Hand: <br />";
 											for(j = 0; j < numCards; j++) {
 												document.getElementById("hand").innerHTML += info[++index] + " ";
+												//document.getElementById("hand").innerHTML += "<img class='card' src='" + info[++index] + ".png'> ";
 											}
 										}
 										else {
