@@ -15,6 +15,18 @@ public class TableThread extends Thread{
 	private Vector<Integer> scores;
 	private boolean modeJustDealer;
 	private int minimumBalance;
+	private String endRoundResult = null;
+	private String finalRoundResult = null;
+	public DealerAI dealer;
+	
+	public String getEndResult() {
+		return finalRoundResult;
+	}
+	
+	public void setEndResult(String s) {
+		finalRoundResult = s;
+		endRoundResult = s;
+	}
 	
 	public int getMinimumBalance() {
 		return minimumBalance;
@@ -104,7 +116,7 @@ public class TableThread extends Thread{
 			System.out.println("TableThread: Table has started.");
 			scores.clear();
 			
-			DealerAI dealer = new DealerAI();
+			dealer = new DealerAI();
 			dealer.hand = new Vector<Integer>();
 			//Check if dealer has Blackjack
 			boolean dealerBlackJack = false;
@@ -122,9 +134,6 @@ public class TableThread extends Thread{
 			for (int i = 0; i<players.size(); i++) {
 				players.get(i).setTurn(true);
 				System.out.println("Checking for input from player: " + i);
-//				String input = players.get(i).getAction();
-//				System.out.println("Performing input: " + input);
-//				players.get(i).setTurn(false);
 				
 				while (players.get(i).isTurn()) {
 					try {
@@ -156,43 +165,52 @@ public class TableThread extends Thread{
 			
 			System.out.println("Everyone has finished. Calculating results.");
 			
+			String endRoundResult = "UPD|ENDGAME|" + players.size();
+			
 			if(modeJustDealer)
 			{
 				System.out.println("Everyone against dealer");
 				for(int i=0; i<players.size();i++)
 				{
-					int curBal = players.get(i).getBalance();
 					int curBet = players.get(i).getBet();
 					int pscore = scores.get(i);
+					System.out.println("For player: " + i + ", bet was " + curBet);
 					System.out.println("Player "+(i+1)+":");
 					if(pscore>21)
 					{
 						System.out.println(players.get(i).username+" has busted ("+pscore+"). Loss.");
+						endRoundResult+="|" + players.get(i).username + "|LOSS";
 					}
 					else if (dscore == pscore)
 					{
 						System.out.println("Dealer ("+dscore+") tied with "+players.get(i).username+" ("+pscore+"). Push.");
-						players.get(i).setBalance(curBal+(curBet));
+						players.get(i).setBalance((curBet) + players.get(i).getBalance());
+						endRoundResult+="|" + players.get(i).username + "|TIE";
 					}
 					else if(players.get(i).getBlackjack() == true)
 					{
 						System.out.println(players.get(i).username+" got a blackjack!  Win.");
-						players.get(i).setBalance(curBal+(2*curBet));
+						players.get(i).setBalance((2*curBet) + players.get(i).getBalance());
+						endRoundResult+="|" + players.get(i).username + "|WIN";
 					}
 					else if(dscore>21)
 					{
 						System.out.println("Dealer ("+dscore+") busted, so "+players.get(i).username+" Wins.");
-						players.get(i).setBalance(curBal+(2*curBet));
+						players.get(i).setBalance((2*curBet) + players.get(i).getBalance());
+						endRoundResult+="|" + players.get(i).username + "|WIN";
 					}
 					else if(pscore<dscore)
 					{
 						System.out.println("Dealer ("+dscore+") beat "+players.get(i).username+" ("+pscore+"). Loss.");
+						endRoundResult+="|" + players.get(i).username + "|LOSS";
 					}
 					else if(pscore>dscore)
 					{
 						System.out.println("Dealer ("+dscore+") lost to "+players.get(i).username+" ("+pscore+"). Win.");
-						players.get(i).setBalance(curBal+(2*curBet));
+						players.get(i).setBalance((2*curBet) + players.get(i).getBalance());
+						endRoundResult+="|" + players.get(i).username + "|WIN";
 					}
+					System.out.println("Player's new balance is " + players.get(i).getBalance());
 				}
 			}	
 			//Pooled mode - highest player takes all, ties are split between players (including dealer)
@@ -292,20 +310,22 @@ public class TableThread extends Thread{
 						}
 					}
 				}
-			
 			}	
 			
-			for(int i = 0; i < players.size();i++)
-			{
-				if(players.get(i).getBalance()==0)
-				{
-					System.out.println(players.get(i).username+" is out of money");
-//					players.get(i).increaseBailout();
-					//For now just setting balance to 500
-					players.get(i).setBalance(500);
-					//Remove them or something idk
-				}
-			}
+//			for(int i = 0; i < players.size();i++)
+//			{
+//				if(players.get(i).getBalance()==0)
+//				{
+//					System.out.println(players.get(i).username+" is out of money");
+////					players.get(i).increaseBailout();
+//					//For now just setting balance to 500
+//					players.get(i).setBalance(500);
+//					//Remove them or something idk
+//				}
+//			}
+			
+
+			finalRoundResult = endRoundResult;
 			
 			System.out.println("TableThread: Round over, resetting.");
 			

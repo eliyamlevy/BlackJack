@@ -59,18 +59,21 @@
 					
 					if (info[0] === "UPD") {
 						if(info[1] === "OUTTABLE") {
-							if(info[1] === "OUTTABLE") {
-								state = 2;
-							}
+							state = 1;
 						}
 						else if(info[1] === "ENDGAME") {
 							for(i = 0; i < info[2]; i++) {
 								if(info[3+2*i] === username) {
+									console.log(info[4+2*i]);
 									if(info[4+2*i] === "WIN") {
 										alert("You won this hand!");
 									}
-									else {
+									else if (info[4+2*i] === "LOSS") {
 										alert("You lost this hand :(");
+									}
+									
+									else {
+										alert("You tied with the dealer.");
 									}
 								}
 								state = 2;
@@ -179,9 +182,9 @@
 					}
 					
 					else if (info[0] === "LIST") {
-						document.getElementById("tables").innerHTML = "";
-						var tableCount = info[1];
 						
+						document.getElementById("tables").innerHTML = "";
+						var tableCount = parseInt(info[1]);
 						var index = 1;					
 						
 						for (i = 0; i<tableCount; i++) {
@@ -285,7 +288,8 @@
 			}
 			
 			function leave() {
-				alert("Sorry you can't do that yet");
+				var message = username + "|ACT|LEAVE";
+				socket.send(message);
 				return false;
 			}
 			
@@ -308,7 +312,8 @@
 					document.getElementById("yourTurn").style.display = "none";
 					document.getElementById("notTurn").style.display = "none";
 					document.getElementById("tableWait").style.display = "block";
-					document.getElementById("hand").innerHTML = "Your Hand";
+					document.getElementById("hand").innerHTML = "Your hand: ";
+					document.getElementById("dealer").innerHTML = "Dealer's hand: ";
 				}
 				else if(state === 3) {
 					document.getElementById("yourTurn").style.display = "none";

@@ -11,6 +11,8 @@ import java.util.Vector;
 import javax.websocket.*;
 import javax.websocket.server.ServerEndpoint;
 
+import Game.DealerAI;
+
 @ServerEndpoint(value = "/ws")
 public class ServerSocket {
 	
@@ -86,32 +88,43 @@ public class ServerSocket {
 			else if(command.equals("HIT")) {
 				players.get(findPlayer(session)).setAction(message);
 				String result = players.get(findPlayer(session)).getResult();
+				TableThread t = this.getTable(session);
+
 				
 				if (result == "SUCCESS") {
-					TableThread t = this.getTable(session);
 					this.sendMessage(session, this.getInGameUpdate(t));
 					this.broadcastToOthersAtTable(this.getInGameUpdate(t), session);
 				}
 				
 				else {
 					this.sendMessage(session, result);
-				}	
+				}
+				
+				if (t.getEndResult() != null) {
+					this.broadcastEndResultToAll(t);
+					t.setEndResult(null);
+				}
 				
 			}
 			
 			else if(command.equals("BET")) {
 				players.get(findPlayer(session)).setAction(message);
 				String result = players.get(findPlayer(session)).getResult();
+				TableThread t = this.getTable(session);
 				
 				if (result == "SUCCESS") {
-					TableThread t = this.getTable(session);
 					this.sendMessage(session, this.getInGameUpdate(t));
 					this.broadcastToOthersAtTable(this.getInGameUpdate(t), session);
 				}
 				
 				else {
 					this.sendMessage(session, result);
-				}	
+				}
+				
+				if (t.getEndResult() != null) {
+					this.broadcastEndResultToAll(t);
+					t.setEndResult(null);
+				}
 				
 			}
 			
@@ -119,9 +132,9 @@ public class ServerSocket {
 				
 				players.get(findPlayer(session)).setAction(message);
 				String result = players.get(findPlayer(session)).getResult();
+				TableThread t = this.getTable(session);
 				
 				if (result == "SUCCESS") {
-					TableThread t = this.getTable(session);
 					this.sendMessage(session, this.getInGameUpdate(t));
 					this.broadcastToOthersAtTable(this.getInGameUpdate(t), session);
 				}
@@ -130,6 +143,10 @@ public class ServerSocket {
 					this.sendMessage(session, result);
 				}	
 				
+				if (t.getEndResult() != null) {
+					this.broadcastEndResultToAll(t);
+					t.setEndResult(null);
+				}
 				
 			}
 			else if(command.equals("LEAVE")) {
@@ -145,32 +162,65 @@ public class ServerSocket {
 				}
 				
 				else if (t.getOwner() == pt) {
-					this.sendMessage(session, "ERR|PLAYING|OWNER");
+					
+					String messageAll = "UPD|OUTTABLE";
+					
+					for (PlayerThread newpt : t.getPlayers()) {
+						int sessionIndex = newpt.sessionIndex;
+						sendMessage(sessionVector.get(sessionIndex), messageAll);
+						System.out.println("Message sent to session index: " + sessionIndex);
+						Connection conn = null;
+						PreparedStatement ps = null;
+						
+						
+						try {
+							Class.forName("com.mysql.cj.jdbc.Driver");
+							conn = DriverManager.getConnection("jdbc:mysql://localhost/BlackJackDB?user=root&password=cs201sql");
+							ps = conn.prepareStatement("UPDATE Users SET balance = ?, score = ? WHERE username = ?");
+							ps.setInt(1, newpt.getBalance());
+							ps.setInt(2, newpt.getBalance());
+							ps.setString(3, newpt.username);
+							ps.execute();
+						
+						} catch (Exception e) {
+							System.out.println(e.getMessage());
+						}
+						
+						if (newpt != pt) players.remove(newpt);
+					}
+					
+					
+					tables.remove(t);
+					
+					for (Session s : sessionVector) {
+						this.sendTableList(s);
+					}
+					
+					
 					return;
 				}
 
-				t.getPlayers().remove(pt);
+				t.RemovePlayer(pt);
 				int newBalance = pt.getBalance();
 				
 				//UPDATE BALANCE IN DATABASE HERE
 				Connection conn = null;
 				PreparedStatement ps = null;
-				ResultSet rs = null;
 				
 				try {
 					Class.forName("com.mysql.cj.jdbc.Driver");
-					conn = DriverManager.getConnection("jdbc:mysql://localhost/BlackJackDB?user=root&password=0330");
+					conn = DriverManager.getConnection("jdbc:mysql://localhost/BlackJackDB?user=root&password=cs201sql");
 					ps = conn.prepareStatement("UPDATE Users SET balance = ?, score = ? WHERE username = ?");
 					ps.setInt(1, newBalance);
 					ps.setInt(2, newBalance);
 					ps.setString(3, username);
-					rs = ps.executeQuery();
+					ps.execute();
 				
 				} catch (Exception e) {
 					System.out.println(e.getMessage());
 				}
 				
-				if (t.getPlayers().size() == 1) {
+				if (t.getPlayers().size() == 0) {
 					tables.remove(t);
 				}
 				
@@ -184,7 +234,7 @@ public class ServerSocket {
 				}
 				
 				
-				String clientInfo = "UPD|OUTTABLE" + username + Integer.toString(newBalance);
+				String clientInfo = "UPD|OUTTABLE" + "|" + username + "|" + Integer.toString(newBalance);
 				this.sendMessage(session, clientInfo);
 
 				
@@ -194,7 +244,7 @@ public class ServerSocket {
 		//Outside of game logic
 		else if (typeTag.equals("CMD")) {
 			
-			Integer userBalance = 100;
+			Integer userBalance = 1000;
 			Connection conn = null;
 			PreparedStatement ps = null;
 			ResultSet rs = null;
@@ -203,19 +253,19 @@ public class ServerSocket {
 			else {
 				
 				try {
-				Class.forName("com.mysql.cj.jdbc.Driver");
-				conn = DriverManager.getConnection("jdbc:mysql://localhost/BlackJackDB?user=root&password=0330");
-				ps = conn.prepareStatement("SELECT balance FROM Users WHERE username = ?");
-				ps.setString(1, username);
-				rs = ps.executeQuery();
+					Class.forName("com.mysql.cj.jdbc.Driver");
+					conn = DriverManager.getConnection("jdbc:mysql://localhost/BlackJackDB?user=root&password=cs201sql");
+					ps = conn.prepareStatement("SELECT balance FROM Users WHERE username = ?");
+					ps.setString(1, username);
+					rs = ps.executeQuery();
 				
-				if (rs.next()) {
-					userBalance = rs.getInt("balance");
+					if (rs.next()) {
+						userBalance = rs.getInt("balance");
+					}
+				
+				} catch (Exception e) {
+					System.out.println(e.getMessage());
 				}
-				
-			} catch (Exception e) {
-				System.out.println(e.getMessage());
-			}
 				
 			}
 			
@@ -357,14 +407,17 @@ public class ServerSocket {
 	
 	private void sendTableList(Session s) {
 		String list = "LIST|";
-		
 		list += tables.size();
+		
+		System.out.println("List sent: " + list);
 		
 		for (int i = 0; i<tables.size(); i++) {
 			list = list + "|" + i + "|" + tables.get(i).GetOpenSpots() + "|" + tables.get(i).owner.username;
 		}
 		
 		sendMessage(s, list);
+		
+		System.out.println("List sent successfully");
 		
 	}
 	
@@ -496,13 +549,35 @@ public class ServerSocket {
 					forClient += "|" + t.getPlayers().get(i).getHand().get(j); //add if they bust/got blackjack
 				}
 					
-			}	
+			}
+			
+			DealerAI tableDealer = t.dealer;
+			
+			forClient += "|DEALER|" + tableDealer.hand.size();
+			
+			for (int i = 0; i<tableDealer.hand.size(); i++) {
+				forClient+="|" + tableDealer.hand.get(i);
+			}
 			
 		}
 		
 		System.out.println("Game Update String: " + forClient);
 		return forClient;
 		
+		
+	}
+	
+	
+	public void broadcastEndResultToAll(TableThread t) {
+		
+		String message = t.getEndResult();
+		
+		System.out.println("End Result Sent: " + message);
+		
+		for (PlayerThread newpt : t.getPlayers()) {
+			int sessionIndex = newpt.sessionIndex;
+			sendMessage(sessionVector.get(sessionIndex), message);
+		}	
 		
 	}
 	

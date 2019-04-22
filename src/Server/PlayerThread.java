@@ -128,8 +128,8 @@ public class PlayerThread extends Thread{
 		try {
 			while (true) {
 				if(this.isTurn()) {
+					bet = 0;
 					score = 0;
-					result = null;
 					
 					while (action == null) {
 						Thread.sleep(10);
@@ -143,6 +143,12 @@ public class PlayerThread extends Thread{
 					while(!details[2].equals("BET"))
 					{
 						Thread.sleep(10);
+						action = null;
+						
+						while (action == null) {
+							Thread.sleep(10);
+						}
+						
 						details = action.split("\\|");
 					}
 					
@@ -198,6 +204,7 @@ public class PlayerThread extends Thread{
 						result = "BLACKJACK";
 						setBet((int)(bet*1.5));
 						this.setTurn(false);
+						result = "SUCCESS";
 					}
 					//SEND UPDATE TO TABLE FOR BLACKJACK/HAND/SCORE
 					//Blackjack = false / hand = current hand / score = BlackJackHelpers.GetIdealScore(hand)
@@ -221,6 +228,7 @@ public class PlayerThread extends Thread{
 								System.out.println("Player busted. End Turn.");
 								hitstayloop = false;
 								this.isTurn = false;
+								result = "SUCCESS";
 								//SEND UPDATE TO TABLE FOR BLACKJACK/HAND/SCORE
 								//Blackjack = false / hand = current hand / score = BlackJackHelpers.GetIdealScore(hand)
 							}
@@ -254,7 +262,6 @@ public class PlayerThread extends Thread{
 					BlackJackHelpers.PrintHand(hand);
 					result = "SUCCESS";
 					action = null;
-					bet = -1;
 					details = null;
 					this.setTurn(false);
 					
