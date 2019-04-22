@@ -15,7 +15,7 @@
 			}
 			
 			.card {
-				height: 30px;
+				height: 80px;
 				width: auto;
 			}
 		</style>                                                                                                                                                      
@@ -58,7 +58,25 @@
 					var info = event.data.split("|");
 					
 					if (info[0] === "UPD") {
-						if (info[1] === "INTABLE") {
+						if(info[1] === "OUTTABLE") {
+							if(info[1] === "OUTTABLE") {
+								state = 2;
+							}
+						}
+						else if(info[1] === "ENDGAME") {
+							for(i = 0; i < info[2]; i++) {
+								if(info[3+2*i] === username) {
+									if(info[4+2*i] === "WON") {
+										alert("You won this hand!");
+									}
+									else {
+										alert("You lost this hand :(");
+									}
+								}
+								state = 2;
+							}
+						}
+						else if (info[1] === "INTABLE") {
 							if (info[2] === "WAITING") {
 								state = 2;
 								//Clear PlayerList
@@ -68,8 +86,8 @@
 								//List all players
 								for (i = 0; i < playerCount; i++) {
 									var playerLine = (i+1) + ": ";
+									currentBalance = info[5+3*i];
 									if(info[6+3*i] === "READY") {
-										currentBalance = info[5+3*i];
 										if(info[4+3*i] === username) {
 											document.getElementById("balance").innerHTML = "Your Balance: " + currentBalance;
 											playerLine += "<b><i>" + info[4+3*i] + "</i></b> <br />";
@@ -135,7 +153,18 @@
 									document.getElementById("playerList").innerHTML += playerLine;
 									++index;
 								}
-								
+								//Now its the dealer display
+								var dNumCards = info[++index];
+								index++;
+								for(d = 0; d < dNumCards) {
+									document.getElementById("hand").innerHTML += info[index + d] + " ";
+									if(d < 1) {
+										document.getElementById("hand").innerHTML += "<img class='card' src='Assets/CardsForWebsite/" + info[index + d] + ".png'> ";
+									}
+									else {
+										document.getElementById("hand").innerHTML += "<img class='card' src='Assets/CardsForWebsite/red_back.png'> ";
+									}
+								}
 							}
 							else {
 								document.getElementById("playerList").innerHTML = "";
@@ -144,7 +173,6 @@
 									var playerLine = i+1 + ": " + info[4+i] + " <br />";
 									document.getElementById("playerList").innerHTML += playerLine;
 								}
-								
 							}
 						}
 					}
@@ -159,11 +187,7 @@
 							document.getElementById("tables").innerHTML += "Table " + info[++index] + " has " + info[++index] + " open spots, and is owned by " +  info[++index] + "<br>";
 						}
 					}
-					else if(info[1] === "OUTTABLE") {
-						if(info[1] === "OUTTABLE") {
-							state = 2;
-						}
-					}
+					
 					else if(info[0] === "ERR") {
 						if(info[1] === "OUTTABLE") {
 							if(info[2] === "TABDNE") {
@@ -356,6 +380,7 @@
 			
 			<div id="openTable">
 				In Table:
+				<div id="dealer">Dealers Hand:<br /></div>
 				<div id="hand">Your Hand:</div>
 				<div id="balance">Your Balance:</div>
 				<div id="yourTurn">
