@@ -13,6 +13,11 @@
   				border-width: 2px;
   				margin: 10px;
 			}
+			
+			.card {
+				height: 30px;
+				width: auto;
+			}
 		</style>                                                                                                                                                      
 		<script>                                                                                                                                                                          
 			var socket;  
@@ -104,7 +109,7 @@
 											document.getElementById("hand").innerHTML = "Your Hand: <br />";
 											for(j = 0; j < numCards; j++) {
 												document.getElementById("hand").innerHTML += info[++index] + " ";
-												//document.getElementById("hand").innerHTML += "<img class='card' src='" + info[++index] + ".png'> ";
+												//document.getElementById("hand").innerHTML += "<img class='card' src='Assets/CardsForWebsite/" + info[index] + ".png'> ";
 											}
 										}
 										else {
