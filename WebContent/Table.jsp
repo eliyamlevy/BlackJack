@@ -151,6 +151,11 @@
 							document.getElementById("tables").innerHTML += "Table " + info[++index] + " has " + info[++index] + " open spots, and is owned by " +  info[++index] + "<br>";
 						}
 					}
+					else if(info[1] === "OUTTABLE") {
+						if(info[1] === "OUTTABLE") {
+							state = 2;
+						}
+					}
 					else if(info[0] === "ERR") {
 						if(info[1] === "OUTTABLE") {
 							if(info[2] === "TABDNE") {
@@ -159,12 +164,28 @@
 							else if(info[2] === "TABFULL") {
 								document.getElementById("outTableErrors").innerHTML = "Given table is full";
 							}
+							else if(info[2] === "SIZEINV") {
+								document.getElementById("outTableErrors").innerHTML = "Size provided is invalid";
+							}
+							else if(info[2] === "GUEST") {
+								document.getElementById("outTableErrors").innerHTML = "Guests cannot create games, please register to create a game";
+							}
 						}
 						else if(info[1] === "WAITING") {
-							
+							if(info[2] === "WAITING") {
+								document.getElementById("waitingErrors").innerHTML = "Cannot start until every player is ready";
+							}
 						}
 						else if(info[1] === "PLAYING") {
-							
+							if(info[2] === "INVLEAVE") {
+								document.getElementById("playingErrors").innerHTML = "Cannot leave table during hand";
+							}
+							else if(info[2] === "INVBET") {
+								document.getElementById("playingErrors").innerHTML = "Invalid bet";
+							}
+							else if(info[2] === "OWNER") {
+								document.getElementById("playingErrors").innerHTML = "OWNER CAN'T LEAVE";
+							}
 						}
 					} 
 					
@@ -244,6 +265,8 @@
 				}
 				else if(state === 1) {
 					document.getElementById("tableStuff").style.display = "block";
+					document.getElementById("openTable").style.display = "none";
+					document.getElementById("tableStatus").style.display = "none";
 				}
 				else if(state === 2) {
 					document.getElementById("tableStuff").style.display = "none";
