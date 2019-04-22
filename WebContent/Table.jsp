@@ -69,12 +69,13 @@
 								for (i = 0; i < playerCount; i++) {
 									var playerLine = (i+1) + ": ";
 									if(info[6+3*i] === "READY") {
-										if(inf0[4+3*i] === username) {
+										currentBalance = info[5+3*i];
+										if(info[4+3*i] === username) {
 											document.getElementById("balance").innerHTML = "Your Balance: " + currentBalance;
 											playerLine += "<b><i>" + info[4+3*i] + "</i></b> <br />";
 										}
 										else {
-											playerLine += "<b><i>" + info[4+3*i] + ": Balance: " +  info[5+3*i] + "</i></b> <br />";
+											playerLine += "<b><i>" + info[4+3*i] + ": Balance: " +  currentBalance + "</i></b> <br />";
 										}
 									}
 									else {
@@ -83,7 +84,7 @@
 											playerLine += info[4+3*i] + "<br />";
 										}
 										else {
-											playerLine += info[4+3*i] + ": Balance: "  +  info[5+3*i] + "<br />";
+											playerLine += info[4+3*i] + ": Balance: "  + currentBalance + "<br />";
 										}
 									}
 									document.getElementById("playerList").innerHTML += playerLine;
@@ -109,7 +110,7 @@
 											document.getElementById("hand").innerHTML = "Your Hand: <br />";
 											for(j = 0; j < numCards; j++) {
 												document.getElementById("hand").innerHTML += info[++index] + " ";
-												//document.getElementById("hand").innerHTML += "<img class='card' src='Assets/CardsForWebsite/" + info[index] + ".png'> ";
+												document.getElementById("hand").innerHTML += "<img class='card' src='Assets/CardsForWebsite/" + info[index] + ".png'> ";
 											}
 										}
 										else {
