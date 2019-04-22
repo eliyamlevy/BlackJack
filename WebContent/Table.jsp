@@ -63,11 +63,11 @@
 								//List all players
 								for (i = 0; i < playerCount; i++) {
 									var playerLine = (i+1) + ": ";
-									if(info[5+2*i] === "READY") {
-										playerLine += "<b><i>" + info[4+2*i] + "</i></b> <br />";
+									if(info[6+3*i] === "READY") {
+										playerLine += "<b><i>" + info[4+3*i] + ": Balance: " +  info[5+3*i] + "</i></b> <br />";
 									}
 									else {
-										playerLine += info[4+2*i] + " <br />";
+										playerLine += info[4+2*i] + ": Balance: "  +  info[5+3*i] + "<br />";
 									}
 									document.getElementById("playerList").innerHTML += playerLine;
 								}
@@ -129,7 +129,7 @@
 						}
 					}
 					
-					else if (info[0] == "LIST") {
+					else if (info[0] === "LIST") {
 						document.getElementById("tables").innerHTML = "";
 						var tableCount = info[1];
 						
@@ -138,9 +138,10 @@
 						for (i = 0; i<tableCount; i++) {
 							document.getElementById("tables").innerHTML += "Table " + info[++index] + " has " + info[++index] + " open spots, and is owned by " +  info[++index] + "<br>";
 						}
-						
-						
 					}
+					else if(info[0] === "ERR") {
+						
+					} 
 					
 					document.getElementById("mychat").innerHTML += event.data + "<br>";
 					showStateDiv();
