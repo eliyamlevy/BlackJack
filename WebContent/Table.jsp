@@ -3,7 +3,8 @@
 <html>                                                                                                                                                                                    
 	<head>                                                                                                                                                                                
 		<meta charset="UTF-8">                                                                                                                                                            
-		<title>Table</title>    
+		<title>Welcome to BlackJack</title>    
+		<link rel="stylesheet" type="text/css" href="Assets/table.css" />
 		<style>
 			#actualPage div {
 				display: block;
