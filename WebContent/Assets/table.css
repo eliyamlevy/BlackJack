@@ -1,17 +1,63 @@
 @charset "UTF-8";
 
-#beforeStart {
-	display:block;
+body{
+	color: gold;
 }
 
-#playersTurn {
-	display:none;
+#actualPage div {
+	/* display: block; */
+	position: relative;
+	padding: 20px;
+	border-style: solid;
+	border-width: 2px;
+	margin: 10px;
+	z-index: 10;
 }
 
-#notPlayersTurn {
-	display:none;
+#background {
+	position:fixed;
+	background-image: url("table.jpg"); 
+	background-repeat: no repeat;
+	background-size: cover;
+	height: 103vh;
+	width: 103vw;
+	left: -1vw;
+	top: -1vh;
+	z-index: 1;
 }
 
-#gameEnd {
-	display:none;
+#usernameDiv {
+	width: 20%;
+}
+
+#tableStatus {
+	display: none;
+}
+
+#tableStuff {
+	display: none;
+}
+
+#openTable {
+	display: block;
+	width: 40%;
+	position: relative;
+	top: 50%;
+}
+
+#debugSwitch {
+	position: relative;
+	z-index: 10;
+}
+
+#tableList {
+	display: grid;
+	grid-template-columns: 17% 17% 17% 17%;
+	grid-gap: 5%;
+	padding: 2%;
+}
+
+.tables {
+	padding: 20px;
+	margin: 20px;
 }
