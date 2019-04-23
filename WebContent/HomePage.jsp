@@ -80,7 +80,7 @@
 				if(login){
 			%>
 				<button id="newTable" onclick="window.location='CreateTable.jsp'">New Table</button><br />
-				<button id="moreInfo" onclick="window.location='AccountInfo.jsp'">More Info...</button>
+				<button id="moreInfo" onclick="window.location='Table.jsp'">More Info...</button>
 				<span id="username"><%= username %></span><br />
 				<span id="balance">$<%= balance %></span>
 			<%

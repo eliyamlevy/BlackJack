@@ -42,7 +42,7 @@
 		</div>
 		<div id="container">
 			<span id="header">Login</span>
-			<form class="form" name="loginForm" id="loginForm" method="POST" onsubmit = "return validate();" action="HomePage.jsp">
+			<form class="form" name="loginForm" id="loginForm" method="POST" onsubmit = "return validate();" action="Table.jsp">
 				Username <br /><input type="text" name="username" id="username"><br />
 				Password <br /><input type="password" name="password" id="password"><br />
 				<span id="errorMessage"></span><br />

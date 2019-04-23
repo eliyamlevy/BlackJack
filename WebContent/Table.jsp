@@ -4,7 +4,6 @@
 	<head>                                                                                                                                                                                
 		<meta charset="UTF-8">                                                                                                                                                            
 		<title>Welcome to BlackJack</title>    
-		<link rel="stylesheet" type="text/css" href="Assets/table.css" />
 		<style>
 			#actualPage div {
 				display: block;
@@ -13,22 +12,96 @@
 				border-style: solid;
   				border-width: 2px;
   				margin: 10px;
+  				overflow: auto;
 			}
 			
 			.card {
 				height: 80px;
 				width: auto;
 			}
+			
+			body{
+				color: gold;
+			}
+			
+			#actualPage div {
+				/* display: block; */
+				position: relative;
+				padding: 20px;
+				border-style: solid;
+				border-width: 2px;
+				margin: 10px;
+				z-index: 10;
+			}
+			
+			#background {
+				position:fixed;
+				background-image: url("Assets/table.jpg"); 
+				background-repeat: no repeat;
+				background-size: cover;
+				height: 103vh;
+				width: 103vw;
+				left: -1vw;
+				top: -1vh;
+				z-index: 1;
+			}
+			
+			#usernameDiv {
+				width: 20%;
+			}
+			
+			#tableStatus {
+				display: none;
+			}
+			
+			#tableStuff {
+				display: none;
+			}
+			
+			#openTable {
+				display: block;
+				width: 40%;
+				position: relative;
+				top: 50%;
+			}
+			
+			#debugSwitch {
+				position: relative;
+				z-index: 10;
+			}
+			
+			.tableList {
+				float: left;
+				display: grid;
+				grid-template-columns: 17% 17% 17% 17%;
+				grid-gap: 5%;
+				padding: 5%;
+				width: 100%;
+			}
+			
+			.table {
+				padding: 20px;
+				margin: 20px;
+				width: 19%;
+				height: auto;
+				float: left;
+				background-color: rgb(255, 255, 255, .04);
+			}
+					
 		</style>                                                                                                                                                      
 		<script>                                                                                                                                                                          
 			var socket;  
 			
-			var username;
-			
-			var currentBalance;
+			var username = "<%= (String) session.getAttribute("user") %>";
 
 			var state = 0;
 			
+			if(username != null) {
+				state = 1;
+			}
+			
+			var currentBalance;
+
 			function setUsername() {
 				state = 1;
 				username = document.getUsernameForm.username.value;
@@ -189,7 +262,7 @@
 						var index = 1;					
 						
 						for (i = 0; i<tableCount; i++) {
-							document.getElementById("tables").innerHTML += "<div class='table' id=''>Table: " + info[++index] + " has " + info[++index] + " open spots, and is owned by " +  info[++index] + "</div>"
+							document.getElementById("tables").innerHTML += "<div class='table' onclick='joinTable(" + info[++index] + ")'>Table: " + " has " + info[++index] + " open spots, and is owned by " +  info[++index] + "</div>"
 						}
 					}
 					
@@ -245,18 +318,19 @@
 			function createTable() {
 				var message = username + "|CMD|NEWTABLE|" + document.createTableForm.size.value;
 				socket.send(message);
-				state = 2;
 				showStateDiv();
 				return false;
 			}
 			
-			function joinTable() {
-				var message = username + "|CMD|JOINTABLE|" + document.joinTableForm.index.value;
+			function joinTable(tableNum) {
+				var message = username + "|CMD|JOINTABLE|" + tableNum;
 				socket.send(message);
 				state = 2;
 				showStateDiv();
 				return false;
 			}
+			
+			
 			
 			function ready() {
 				var message = username + "|ACT|READY";
@@ -302,6 +376,7 @@
 					document.getElementById("tableStatus").style.display = "none";
 				}
 				else if(state === 1) {
+					document.getElementById("usernameDiv").style.display = "none";
 					document.getElementById("tableStuff").style.display = "block";
 					document.getElementById("openTable").style.display = "none";
 					document.getElementById("tableStatus").style.display = "none";
@@ -353,6 +428,7 @@
 		</script>                                                                                                                                                                         
 	</head>                                                                                                                                                                               
 	<body onload="connectToServer();"> 
+		<div id="background"></div>
 		<div id="actualPage"> 
 			<div id="usernameDiv">
 				<form name="getUsernameForm" onsubmit="return setUsername();"> 
@@ -360,21 +436,13 @@
 					<input type="submit" name="submit" value="Login">                                                                                                                   
 				</form> 
 			</div>
-			<div id="tableStatus">
+			<div id="tableStatus" style="margin: 5px;">
 				List of Players in Table: <div id="playerList"> </div> 
 			</div>
 			<div id="tableStuff">
 				<div id="tableList">
-					Active Tables: <div id="tables"> </div> 
+					Active Tables: <div id="tables" class="tableList"> </div> 
 				</div> 
-				<div id="joinTable">
-					<form name="joinTableForm" onsubmit="return joinTable();"> 
-						Join Table: <br>                                                                                                                              
-						Index of Table: <input type="text" name="index"> <br>                                                                                                                                     
-						<input type="submit" name="submit" value="Join Table">                                                                                                                      
-					</form>
-				</div>
-				or ...
 				<div id="createTable">
 					<form name="createTableForm" onsubmit="return createTable();"> 
 						Create Table: <br>

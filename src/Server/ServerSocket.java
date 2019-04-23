@@ -328,7 +328,8 @@ public class ServerSocket {
 					return;
 				}
 				
-				if (username == "GUEST" ) {
+				if (username.equals("GUEST")) {
+					System.out.println("Guest user bro");
 					sendMessage(session, "ERR|OUTTABLE|GUEST");
 					return;
 				}
@@ -374,6 +375,7 @@ public class ServerSocket {
 	}
 	
 	private void sendMessage(Session s, String message) {
+		System.out.println("Sending Message: " + message);
 		try {
 			s.getBasicRemote().sendText(message);
 		} catch (Exception e) {

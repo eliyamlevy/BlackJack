@@ -60,4 +60,7 @@ body{
 .tables {
 	padding: 20px;
 	margin: 20px;
+	width: 20%;
+	height: auto;
 }
+

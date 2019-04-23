@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <%
 	session.setAttribute("login", false);
-	session.setAttribute("user", null);
+	session.setAttribute("user", "GUEST");
 %>
 <html>
 	<head>
@@ -27,7 +27,7 @@
 				<a href="${pageContext.request.contextPath}/Register.jsp">Register</a>
 			</div>
 			<div class="menuEntry">
-				<a href="${pageContext.request.contextPath}/HomePage.jsp">Continue as guest</a>
+				<a href="${pageContext.request.contextPath}/Table.jsp">Continue as guest</a>
 			</div>
 		</div>
 	</body>
