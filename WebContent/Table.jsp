@@ -444,7 +444,7 @@
 						<input type="submit" name="submit" value="Create Table">                                                                                                                      
 					</form> 
 				</div>
-				<button href="AcountInfo.jsp">Acount Info</button>
+				<button href="${pageContext.request.contextPath}/AcountInfo.jsp">Acount Info</button>
 			</div>
 			
 			<div id="openTable">
@@ -482,7 +482,7 @@
 		<br /><br />
 		
 		<form id="debugSwitch" name="debugging" onsubmit="return showDebug();">                                                                                                                                                                                                                                                 
-			<input type="submit" name="debugging" value="Debug?">                                                                                                                      
+			<input type="submit" name="debugging" value="Debug?" style="display: none;">                                                                                                                      
 		</form>   
 		
 		<!-- This stuff is the old stuff -->   
