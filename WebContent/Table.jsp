@@ -204,8 +204,7 @@
 											//Update Hand
 											document.getElementById("hand").innerHTML = "Your Hand: <br />";
 											for(j = 0; j < numCards; j++) {
-												document.getElementById("hand").innerHTML += info[++index] + " ";
-												document.getElementById("hand").innerHTML += "<img class='card' src='Assets/CardsForWebsite/" + info[index] + ".png'> ";
+												document.getElementById("hand").innerHTML += "<img class='card' src='Assets/CardsForWebsite/" + info[++index] + ".png'> ";
 											}
 										}
 										else {
@@ -235,7 +234,6 @@
 								index++;
 								document.getElementById("dealer").innerHTML = "";
 								for(d = 0; d < dNumCards; d++) {
-									document.getElementById("dealer").innerHTML += info[index + d] + " ";
 									if(d < 1) {
 										document.getElementById("dealer").innerHTML += "<img class='card' src='Assets/CardsForWebsite/" + info[index + d] + ".png'> ";
 									}
@@ -272,29 +270,25 @@
 								document.getElementById("outTableErrors").innerHTML = "Table does not exist";
 							}
 							else if(info[2] === "TABFULL") {
-								document.getElementById("outTableErrors").innerHTML = "Given table is full";
+								alert("Given table is full");
 							}
 							else if(info[2] === "SIZEINV") {
-								document.getElementById("outTableErrors").innerHTML = "Size provided is invalid";
+								alert("Size provided is invalid");
 							}
 							else if(info[2] === "GUEST") {
-								document.getElementById("outTableErrors").innerHTML = "Guests cannot create games, please register to create a game";
+								alert("Guests cannot create games, please register to create a game")
 							}
 						}
 						else if(info[1] === "WAITING") {
 							if(info[2] === "WAITING") {
-								document.getElementById("waitingErrors").innerHTML = "Cannot start until every player is ready";
-							}
+								alert("Cannot start game until every player is ready");							}
 						}
 						else if(info[1] === "PLAYING") {
 							if(info[2] === "INVLEAVE") {
-								document.getElementById("playingErrors").innerHTML = "Cannot leave table during hand";
+								alert("Cannot leave the table in the middle of a round");
 							}
 							else if(info[2] === "INVBET") {
 								document.getElementById("playingErrors").innerHTML = "Invalid bet";
-							}
-							else if(info[2] === "OWNER") {
-								document.getElementById("playingErrors").innerHTML = "OWNER CAN'T LEAVE";
 							}
 						}
 					} 
