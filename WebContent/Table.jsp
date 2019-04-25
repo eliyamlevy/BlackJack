@@ -267,7 +267,7 @@
 					else if(info[0] === "ERR") {
 						if(info[1] === "OUTTABLE") {
 							if(info[2] === "TABDNE") {
-								document.getElementById("outTableErrors").innerHTML = "Table does not exist";
+								alert("Table does not exist");
 							}
 							else if(info[2] === "TABFULL") {
 								alert("Given table is full");
@@ -276,7 +276,7 @@
 								alert("Size provided is invalid");
 							}
 							else if(info[2] === "GUEST") {
-								alert("Guests cannot create games, please register to create a game")
+								alert("Guests cannot create games, please register to create a game");
 							}
 						}
 						else if(info[1] === "WAITING") {
@@ -288,7 +288,7 @@
 								alert("Cannot leave the table in the middle of a round");
 							}
 							else if(info[2] === "INVBET") {
-								document.getElementById("playingErrors").innerHTML = "Invalid bet";
+								alert("Invalid Bet");
 							}
 						}
 					} 
@@ -444,7 +444,7 @@
 						<input type="submit" name="submit" value="Create Table">                                                                                                                      
 					</form> 
 				</div>
-				<div class="error" id="outTableErrors"></div>
+				<button href="AcountInfo.jsp">Acount Info</button>
 			</div>
 			
 			<div id="openTable">
